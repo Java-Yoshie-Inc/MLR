@@ -24,6 +24,8 @@ import com.sun.net.httpserver.HttpServer;
 
 import client.User;
 import tools.Constants;
+import tools.Logger;
+import tools.Logger.Level;
 import tools.Tools;
 
 public class Server {
@@ -46,10 +48,9 @@ public class Server {
 		try {
 			server = HttpServer.create(new InetSocketAddress(PORT), 0);
 		} catch (BindException e) {
-			System.out.println("Server is already running on this ip");
+			Logger.log("Server is already running on this ip");
 			return;
 		}
-		
 		server.setExecutor(null);
 
 		server.createContext(Constants.UPDATE_CONTEXT, new HttpHandler() {
@@ -57,7 +58,7 @@ public class Server {
 				InputStream in = arg.getRequestBody();
 				User user = gson.fromJson(readInputStream(in), User.class);
 
-				System.out.println(user.getName() + " updates");
+				Logger.log(user.getName() + " updates");
 
 				ServerResponse serverResponse = new ServerResponse(NAME);
 				String gsonString = gson.toJson(serverResponse, ServerResponse.class);
@@ -83,7 +84,8 @@ public class Server {
 	public void start() {
 		server.start();
 		loop();
-		//console = new Console(this);
+		console = new Console(this);
+		Logger.log("Server started");
 	}
 	
 	public void stop() {
@@ -91,7 +93,7 @@ public class Server {
 		server.stop(0);
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException {
 		Server server = new Server();
 		server.start();
 	}
@@ -109,11 +111,6 @@ public class Server {
 		});
 		loop.setInitialDelay(0);
 		loop.start();
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	private void checkServerReachability() throws IOException {
@@ -122,7 +119,7 @@ public class Server {
 				continue;
 			}
 			
-			System.out.println("Checking for status of " + server);
+			Logger.log("Checking for status of " + server);
 			
 			try {
 				String url = "http://" + server + ":" + PORT + Constants.REACHABILITY_CHECK_CONTEXT;
@@ -137,23 +134,14 @@ public class Server {
 				output.write("".getBytes());
 				output.close();
 
-				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-				StringBuffer gsonResponse = new StringBuffer();
-				String inputLine;
-				while ((inputLine = in.readLine()) != null) {
-					gsonResponse.append(inputLine);
-				}
-				in.close();
-
 				con.getInputStream();
 				
-				System.out.println("Server " + server + " is online");
+				Logger.log("Server " + server + " is online");
 			} catch (ConnectException | FileNotFoundException e) {
-				System.out.println(server + " is down");
+				Logger.log(server + " is down", Level.WARNING);
 			}
 		}
-		System.out.println();
+		Logger.log();
 	}
 
 	private String readInputStream(InputStream in) throws IOException {

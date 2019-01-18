@@ -56,12 +56,6 @@ public class Client {
 		});
 		loop2.setInitialDelay(0);
 		loop2.start();
-		
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	private void checkServerReachability() {
