@@ -1,4 +1,4 @@
-package main;
+package client;
 
 
 import java.awt.event.ActionEvent;
@@ -15,9 +15,11 @@ import javax.swing.Timer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import server.ServerResponse;
+import tools.Constants;
+
 public class Client {
 	
-	private final String SERVER_IP_ADDRESS = "localhost:2026";
 	private final Gson gson = new GsonBuilder().create();
 	private final User USER;
 	
@@ -51,29 +53,33 @@ public class Client {
 	}
 	
 	private void update() throws IOException {
-		String url = "http://" + SERVER_IP_ADDRESS + "/update";
-		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-		
-		con.setRequestMethod("POST");
-		con.setDoOutput(true);
-		con.setDoInput(true);
-		
-		OutputStream output = con.getOutputStream();
-		output.write(gson.toJson(USER, USER.getClass()).getBytes());
-		output.close();
-		
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		
-		StringBuffer gsonResponse = new StringBuffer();
-		String inputLine;
-		while ((inputLine = in.readLine()) != null) {
-			gsonResponse.append(inputLine);
+		try {
+			String url = "http://" + Constants.SERVER_IPS[0] + Constants.PORT + "/update";
+			URL obj = new URL(url);
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+			
+			con.setRequestMethod("POST");
+			con.setDoOutput(true);
+			con.setDoInput(true);
+			
+			OutputStream output = con.getOutputStream();
+			output.write(gson.toJson(USER, USER.getClass()).getBytes());
+			output.close();
+			
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			
+			StringBuffer gsonResponse = new StringBuffer();
+			String inputLine;
+			while ((inputLine = in.readLine()) != null) {
+				gsonResponse.append(inputLine);
+			}
+			in.close();
+			
+			ServerResponse response = gson.fromJson(gsonResponse.toString(), ServerResponse.class);
+			System.out.println(response.getName());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		in.close();
-		
-		ServerResponse response = gson.fromJson(gsonResponse.toString(), ServerResponse.class);
-		System.out.println(response.getName());
 	}
 	
 }

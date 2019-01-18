@@ -1,4 +1,6 @@
-package main;
+package client;
+
+import tools.Tools;
 
 public class User {
 
@@ -26,7 +28,7 @@ public class User {
 	public String toString() {
 		return NAME+","+IP+","+LOCAL_IP;
 	}
-
+	
 	public String getIp() {
 		return IP;
 	}

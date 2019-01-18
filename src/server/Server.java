@@ -1,4 +1,4 @@
-package main;
+package server;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.BindException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -21,9 +22,12 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-public class Server {
+import client.User;
+import tools.Constants;
+import tools.Tools;
 
-	private String[] SERVER_IPS = new String[] { "192.168.178.21", "192.168.178.31" };
+public class Server {
+	
 	private String IP = Tools.getIp();
 	private String LOCAL_IP = Tools.getLocalIp();
 
@@ -37,7 +41,13 @@ public class Server {
 	private final String NAME = "IntexServer";
 
 	public Server() throws Exception {
-		server = HttpServer.create(new InetSocketAddress(PORT), 0);
+		try {
+			server = HttpServer.create(new InetSocketAddress(PORT), 0);
+		} catch (BindException e) {
+			System.out.println("Server is already running on this ip");
+			return;
+		}
+		
 		server.setExecutor(null);
 
 		server.createContext("/update", new HttpHandler() {
@@ -67,7 +77,7 @@ public class Server {
 			}
 		});
 	}
-
+	
 	public void start() {
 		server.start();
 		loop();
@@ -98,7 +108,7 @@ public class Server {
 	}
 	
 	private void update() throws IOException {
-		for(String server : SERVER_IPS) {
+		for(String server : Constants.SERVER_IPS) {
 			if(usePublicIP && server.equals(IP) || server.equals(LOCAL_IP)) {
 				continue;
 			}
