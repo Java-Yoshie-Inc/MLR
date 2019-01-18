@@ -27,7 +27,7 @@ public class Server {
 	private final int HTTP_OK_STATUS = 200;
 	
 	private final String NAME = "IntexServer";
-	//
+	
 	public Server() throws Exception {
 		server = HttpServer.create(new InetSocketAddress(PORT), 0);
 		
