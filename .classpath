@@ -6,6 +6,6 @@
 		</accessrules>
 	</classpathentry>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="D:/Data/GitHub/MLR/lib/GSON.jar"/>
+	<classpathentry kind="lib" path="lib/GSON.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
