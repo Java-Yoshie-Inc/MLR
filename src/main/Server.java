@@ -32,6 +32,7 @@ public class Server {
 	private int PORT = 2026;
 	private HttpServer server;
 	private final int HTTP_OK_STATUS = 200;
+	private boolean usePublicIP = false;
 
 	private final String NAME = "IntexServer";
 
@@ -95,11 +96,14 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void update() throws IOException {
 		for(String server : SERVER_IPS) {
-			System.out.println(server);
-			if(server.equals(LOCAL_IP)) continue;
+			if(usePublicIP && server.equals(IP) || server.equals(LOCAL_IP)) {
+				continue;
+			}
+			
+			System.out.println("Checking for status of " + server);
 			
 			try {
 				String url = "http://" + server + ":" + PORT + "/checkstatus";
@@ -109,7 +113,7 @@ public class Server {
 				con.setRequestMethod("POST");
 				con.setDoOutput(true);
 				con.setDoInput(true);
-
+				
 				OutputStream output = con.getOutputStream();
 				output.write("".getBytes());
 				output.close();
@@ -124,10 +128,13 @@ public class Server {
 				in.close();
 
 				con.getInputStream();
+				
+				System.out.println("Server " + server + " is online");
 			} catch (ConnectException | FileNotFoundException e) {
 				System.out.println(server + " is down");
 			}
 		}
+		System.out.println();
 	}
 
 	private String readInputStream(InputStream in) throws IOException {
