@@ -123,7 +123,7 @@ public class Server {
 				StringBuffer gsonResponse = new StringBuffer();
 				String inputLine;
 				while ((inputLine = in.readLine()) != null) {
-					gsonResponse.append(inputLine);d
+					gsonResponse.append(inputLine);
 				}
 				in.close();
 
