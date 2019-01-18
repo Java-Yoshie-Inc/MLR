@@ -10,13 +10,13 @@ public class ServerData {
 	public ServerData(String ip, int priority) {
 		this.IP = ip;
 		this.PRIORITY = priority;
-		this.online = true;
+		this.online = false;
 	}
 	
-	public String getIP() {
+	public String getIp() {
 		return IP;
 	}
-	public int getPRIORITY() {
+	public int getPriority() {
 		return PRIORITY;
 	}
 	public boolean isOnline() {

@@ -4,9 +4,11 @@ package client;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -23,7 +25,6 @@ public class Client {
 	
 	private final Gson gson = new GsonBuilder().create();
 	private final User USER;
-	private ServerData currentServer = Constants.SERVERS[0];
 	
 	public static void main(String[] args) throws IOException {
 		new Client();
@@ -31,21 +32,28 @@ public class Client {
 	
 	public Client() {
 		USER = new User();
+		checkServerReachability();
 		loop();
 	}
 	
-	private void loop() {
-		Timer timer = new Timer(500, new ActionListener() {
+	private void loop() {System.out.println("sfdsf");
+		Timer loop = new Timer(500, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				try {
-					update();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				update();
 			}
 		});
-		timer.start();
+		loop.start();
+		
+		Timer loop2 = new Timer(60*1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				checkServerReachability();
+			}
+		});
+		loop2.setInitialDelay(0);
+		loop2.start();
+		
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
@@ -53,9 +61,49 @@ public class Client {
 		}
 	}
 	
-	private void update() throws IOException {
+	private void checkServerReachability() {
+		for(ServerData server : Constants.SERVERS) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						String url = "http://" + server.getIp() + Constants.PORT + Constants.REACHABILITY_CHECK_CONTEXT;
+						URL obj = new URL(url);
+						HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+						
+						con.setRequestMethod("POST");
+						con.setDoOutput(true);
+						con.setDoInput(true);
+						
+						OutputStream output = con.getOutputStream();
+						output.write("".getBytes());
+						output.close();
+						
+						con.getInputStream();
+						
+						server.setOnline(true);
+					} catch (ConnectException | FileNotFoundException e) {
+						server.setOnline(false);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}).start();
+		}
+	}
+	
+	private void update() {
+		ServerData currentServer = getCurrentServer();
+		
+		if(currentServer == null) {
+			System.out.println("All Servers are down");
+			return;
+		}
+		
+		System.out.println(currentServer.getIp());
+		
 		try {
-			String url = "http://" + Constants.SERVER_IPS[0] + Constants.PORT + "/update";
+			String url = "http://" + currentServer.getIp() + Constants.PORT + Constants.UPDATE_CONTEXT;
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 			
@@ -79,16 +127,21 @@ public class Client {
 			ServerResponse response = gson.fromJson(gsonResponse.toString(), ServerResponse.class);
 			System.out.println(response.getName());
 		} catch (Exception e) {
-			this.currentServer.setOnline(false);
-			
-			for(ServerData server : Constants.SERVERS) {
-				if(currentServer.isOnline()) {
-					this.currentServer = server;
-					update();
-					break;
+			currentServer.setOnline(false);
+			update();
+		}
+	}
+	
+	private ServerData getCurrentServer() {
+		ServerData server = null;
+		for(ServerData s : Constants.SERVERS) {
+			if(s.isOnline()) {
+				if(server == null || s.getPriority() < server.getPriority()) {
+					server = s;
 				}
 			}
 		}
+		return server;
 	}
 	
 }

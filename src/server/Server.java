@@ -68,7 +68,7 @@ public class Server {
 			}
 		});
 		
-		server.createContext("/checkstatus", new HttpHandler() {
+		server.createContext(Constants.UPDATE_CONTEXT, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
 				arg.getRequestBody();
 				String response  = "";
@@ -101,7 +101,7 @@ public class Server {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				try {
-					update();
+					checkServerReachability();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -116,7 +116,7 @@ public class Server {
 		}
 	}
 	
-	private void update() throws IOException {
+	private void checkServerReachability() throws IOException {
 		for(String server : Constants.SERVER_IPS) {
 			if(usePublicIP && server.equals(IP) || server.equals(LOCAL_IP)) {
 				continue;
@@ -125,7 +125,7 @@ public class Server {
 			System.out.println("Checking for status of " + server);
 			
 			try {
-				String url = "http://" + server + ":" + PORT + "/checkstatus";
+				String url = "http://" + server + ":" + PORT + Constants.REACHABILITY_CHECK_CONTEXT;
 				URL obj = new URL(url);
 				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
