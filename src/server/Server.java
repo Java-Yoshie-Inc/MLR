@@ -42,6 +42,7 @@ public class Server {
 	private Timer loop;
 	
 	private boolean usePublicIP = false;
+	private boolean hasCheckedReachability = true;
 	
 
 	public Server() throws IOException {
@@ -83,9 +84,9 @@ public class Server {
 	
 	public void start() {
 		server.start();
-		loop();
 		console = new Console(this);
 		Logger.log("Server started");
+		loop();
 	}
 	
 	public void stop() {
@@ -102,11 +103,17 @@ public class Server {
 		loop = new Timer(5000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				try {
-					checkServerReachability();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				if(!hasCheckedReachability) return;
+				
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							checkServerReachability();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}).start();
 			}
 		});
 		loop.setInitialDelay(0);
@@ -114,12 +121,14 @@ public class Server {
 	}
 	
 	private void checkServerReachability() throws IOException {
+		hasCheckedReachability = false;
+		
 		for(String server : Constants.SERVER_IPS) {
 			if(usePublicIP && server.equals(IP) || server.equals(LOCAL_IP)) {
 				continue;
 			}
 			
-			Logger.log("Checking for status of " + server);
+			Logger.log("Checking status of Server " + server);
 			
 			try {
 				String url = "http://" + server + ":" + PORT + Constants.REACHABILITY_CHECK_CONTEXT;
@@ -138,10 +147,12 @@ public class Server {
 				
 				Logger.log("Server " + server + " is online");
 			} catch (ConnectException | FileNotFoundException e) {
-				Logger.log(server + " is down", Level.WARNING);
+				Logger.log("Server " + server + " is down", Level.WARNING);
 			}
 		}
 		Logger.log();
+		
+		hasCheckedReachability = true;
 	}
 
 	private String readInputStream(InputStream in) throws IOException {

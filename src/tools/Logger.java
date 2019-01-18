@@ -1,5 +1,8 @@
 package tools;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class Logger {
 
 	public enum Level {
@@ -13,6 +16,8 @@ public class Logger {
 	}
 
 	public static void log(String text, Level level) {
+		sb.append(getTime());
+		sb.append(" ");
 		if (level != Level.INFO) {
 			sb.append(level + ": ");
 		}
@@ -25,6 +30,12 @@ public class Logger {
 	
 	public static void log() {
 		log("");
+	}
+	
+	private static String getTime() {
+		Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("[dd.MM.yy-HH:mm:ss]");
+        return sdf.format(cal.getTime());
 	}
 
 }

@@ -36,6 +36,7 @@ class Console {
 	private void setupFrame() {
 		frame = new JFrame();
 		frame.setSize(1200, 800);
+		frame.setTitle("Server Console");
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.addWindowListener(new WindowListener() {
@@ -88,7 +89,6 @@ class Console {
 	}
 	
 	private void update() {
-		System.out.println("sdfsdf");
 		if(!consoleArea.getText().equals(Logger.getLog())) {
 			consoleArea.setText(Logger.getLog());
 		}
