@@ -30,6 +30,7 @@ import tools.Tools;
 
 public class Server {
 	
+	private static final int SERVERS_REACHABILITY_CHECK_DELAY = 15*1000;
 	private String IP = Tools.getIp();
 	private String LOCAL_IP = Tools.getLocalIp();
 	private int PORT = 2026;
@@ -100,7 +101,7 @@ public class Server {
 	}
 
 	private void loop() {
-		loop = new Timer(5000, new ActionListener() {
+		loop = new Timer(SERVERS_REACHABILITY_CHECK_DELAY, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				if(!hasCheckedReachability) return;
@@ -150,7 +151,6 @@ public class Server {
 				Logger.log("Server " + server + " is down", Level.WARNING);
 			}
 		}
-		Logger.log();
 		
 		hasCheckedReachability = true;
 	}
