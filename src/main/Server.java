@@ -21,7 +21,7 @@ import com.sun.net.httpserver.HttpServer;
 
 public class Server {
 
-	private String[] SERVER_IPS = new String[] { "localhost", "192.168.178.31" };
+	private String[] SERVER_IPS = new String[] { "192.168.178.21", "192.168.178.31" };
 	private String IP = Tools.getIp();
 	private String LOCAL_IP = Tools.getLocalIp();
 
