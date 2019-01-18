@@ -17,12 +17,13 @@ import com.google.gson.GsonBuilder;
 
 import server.ServerResponse;
 import tools.Constants;
+import tools.ServerData;
 
 public class Client {
 	
 	private final Gson gson = new GsonBuilder().create();
 	private final User USER;
-	
+	private ServerData currentServer = Constants.SERVERS[0];
 	
 	public static void main(String[] args) throws IOException {
 		new Client();
@@ -78,7 +79,15 @@ public class Client {
 			ServerResponse response = gson.fromJson(gsonResponse.toString(), ServerResponse.class);
 			System.out.println(response.getName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			this.currentServer.setOnline(false);
+			
+			for(ServerData server : Constants.SERVERS) {
+				if(currentServer.isOnline()) {
+					this.currentServer = server;
+					update();
+					break;
+				}
+			}
 		}
 	}
 	
