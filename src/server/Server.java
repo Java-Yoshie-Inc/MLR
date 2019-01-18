@@ -30,17 +30,19 @@ public class Server {
 	
 	private String IP = Tools.getIp();
 	private String LOCAL_IP = Tools.getLocalIp();
-
-	private Gson gson = new GsonBuilder().create();
-
 	private int PORT = 2026;
-	private HttpServer server;
 	private final int HTTP_OK_STATUS = 200;
-	private boolean usePublicIP = false;
-
 	private final String NAME = "IntexServer";
 
-	public Server() throws Exception {
+	private Gson gson = new GsonBuilder().create();
+	private HttpServer server;
+	private Console console;
+	private Timer loop;
+	
+	private boolean usePublicIP = false;
+	
+
+	public Server() throws IOException {
 		try {
 			server = HttpServer.create(new InetSocketAddress(PORT), 0);
 		} catch (BindException e) {
@@ -81,6 +83,12 @@ public class Server {
 	public void start() {
 		server.start();
 		loop();
+		//console = new Console(this);
+	}
+	
+	public void stop() {
+		loop.stop();
+		server.stop(0);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -89,7 +97,7 @@ public class Server {
 	}
 
 	private void loop() {
-		Timer timer = new Timer(5000, new ActionListener() {
+		loop = new Timer(5000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				try {
@@ -99,7 +107,8 @@ public class Server {
 				}
 			}
 		});
-		timer.start();
+		loop.setInitialDelay(0);
+		loop.start();
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
