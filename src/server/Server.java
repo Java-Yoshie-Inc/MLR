@@ -52,7 +52,7 @@ public class Server {
 		
 		server.setExecutor(null);
 
-		server.createContext("/update", new HttpHandler() {
+		server.createContext(Constants.UPDATE_CONTEXT, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
 				InputStream in = arg.getRequestBody();
 				User user = gson.fromJson(readInputStream(in), User.class);
@@ -68,7 +68,7 @@ public class Server {
 			}
 		});
 		
-		server.createContext(Constants.UPDATE_CONTEXT, new HttpHandler() {
+		server.createContext(Constants.REACHABILITY_CHECK_CONTEXT, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
 				arg.getRequestBody();
 				String response  = "";
