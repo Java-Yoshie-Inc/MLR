@@ -57,7 +57,7 @@ public class Server {
 				InputStream in = arg.getRequestBody();
 				User user = gson.fromJson(readInputStream(in), User.class);
 
-				System.out.println(user);
+				System.out.println(user.getName() + " updates");
 
 				ServerResponse serverResponse = new ServerResponse(NAME);
 				String gsonString = gson.toJson(serverResponse, ServerResponse.class);

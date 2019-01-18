@@ -26,6 +26,9 @@ public class Client {
 	private final Gson gson = new GsonBuilder().create();
 	private final User USER;
 	
+	private static final int UPDATE_DELAY = 500;
+	private static final int SERVER_REACHABILITY_CHECK_DELAY = 22*1000;
+	
 	public static void main(String[] args) throws IOException {
 		new Client();
 	}
@@ -36,8 +39,8 @@ public class Client {
 		loop();
 	}
 	
-	private void loop() {System.out.println("sfdsf");
-		Timer loop = new Timer(500, new ActionListener() {
+	private void loop() {
+		Timer loop = new Timer(UPDATE_DELAY, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				update();
@@ -45,7 +48,7 @@ public class Client {
 		});
 		loop.start();
 		
-		Timer loop2 = new Timer(60*1000, new ActionListener() {
+		Timer loop2 = new Timer(SERVER_REACHABILITY_CHECK_DELAY, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				checkServerReachability();
@@ -125,7 +128,6 @@ public class Client {
 			in.close();
 			
 			ServerResponse response = gson.fromJson(gsonResponse.toString(), ServerResponse.class);
-			System.out.println(response.getName());
 		} catch (Exception e) {
 			currentServer.setOnline(false);
 			update();
