@@ -3,10 +3,12 @@ package main;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
@@ -21,7 +23,7 @@ import com.sun.net.httpserver.HttpServer;
 
 public class Server {
 
-	private String[] SERVER_IPS = new String[] { "localhost", "192.168.178.31" };
+	private String[] SERVER_IPS = new String[] { "192.168.178.21", "192.168.178.31" };
 	private String IP = Tools.getIp();
 	private String LOCAL_IP = Tools.getLocalIp();
 
@@ -49,6 +51,17 @@ public class Server {
 				arg.sendResponseHeaders(HTTP_OK_STATUS, gsonString.length());
 				OutputStream output = arg.getResponseBody();
 				output.write(gsonString.getBytes());
+				output.close();
+			}
+		});
+		
+		server.createContext("/checkstatus", new HttpHandler() {
+			public void handle(HttpExchange arg) throws IOException {
+				arg.getRequestBody();
+				String response  = "";
+				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
+				OutputStream output = arg.getResponseBody();
+				output.write(response.getBytes());
 				output.close();
 			}
 		});
@@ -85,30 +98,35 @@ public class Server {
 
 	private void update() throws IOException {
 		for(String server : SERVER_IPS) {
-			if(server.equals(IP) || server.equals(LOCAL_IP)) return;
+			System.out.println(server);
+			if(server.equals(LOCAL_IP)) continue;
 			
-			String url = "http://" + server + "/checkstatus";
-			URL obj = new URL(url);
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+			try {
+				String url = "http://" + server + ":" + PORT + "/checkstatus";
+				URL obj = new URL(url);
+				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-			con.setRequestMethod("POST");
-			con.setDoOutput(true);
-			con.setDoInput(true);
+				con.setRequestMethod("POST");
+				con.setDoOutput(true);
+				con.setDoInput(true);
 
-			OutputStream output = con.getOutputStream();
-			output.write("".getBytes());
-			output.close();
+				OutputStream output = con.getOutputStream();
+				output.write("".getBytes());
+				output.close();
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
-			StringBuffer gsonResponse = new StringBuffer();
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				gsonResponse.append(inputLine);
+				StringBuffer gsonResponse = new StringBuffer();
+				String inputLine;
+				while ((inputLine = in.readLine()) != null) {
+					gsonResponse.append(inputLine);
+				}
+				in.close();
+
+				con.getInputStream();
+			} catch (ConnectException | FileNotFoundException e) {
+				System.out.println(server + " is down");
 			}
-			in.close();
-
-			con.getInputStream();
 		}
 	}
 
