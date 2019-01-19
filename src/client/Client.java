@@ -36,6 +36,7 @@ public class Client {
 	public Client() {
 		USER = new User();
 		checkServerReachability();
+		login();
 		loop();
 	}
 	
@@ -95,15 +96,41 @@ public class Client {
 		}
 	}
 	
+	private void login() {
+		System.out.println("Loggin in...");
+		
+		while(true) {
+			ServerData currentServer = getCurrentServer();
+			if(currentServer == null) continue;
+			
+			try {
+				String url = "http://" + currentServer.getIp() + Constants.LOGIN_CONTEXT;
+				URL obj = new URL(url);
+				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+				
+				con.setRequestMethod("POST");
+				con.setDoOutput(true);
+				con.setDoInput(false);
+				
+				OutputStream output = con.getOutputStream();
+				output.write(gson.toJson(USER, USER.getClass()).getBytes());
+				output.close();
+				
+				break;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		System.out.println("Logged in");
+	}
+	
 	private void update() {
 		ServerData currentServer = getCurrentServer();
 		
-		if(currentServer == null) {
-			System.out.println("All Servers are down");
-			return;
-		}
+		if(currentServer == null) return;
 		
-		System.out.println(currentServer.getIp());
+		System.out.println("Connecting to Server " + currentServer.getIp());
 		
 		try {
 			String url = "http://" + currentServer.getIp() + Constants.UPDATE_CONTEXT;
@@ -143,6 +170,7 @@ public class Client {
 				}
 			}
 		}
+		if(server == null) System.out.println("All Servers all down ");
 		return server;
 	}
 	

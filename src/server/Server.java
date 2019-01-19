@@ -13,6 +13,7 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.util.Random;
 
 import javax.swing.Timer;
 
@@ -31,12 +32,14 @@ import tools.Tools;
 
 public class Server {
 	
+	private static final Random random = new Random();
+	private static final Gson gson = new GsonBuilder().create();
+	
 	private static final int SERVERS_REACHABILITY_CHECK_DELAY = 15*1000;
 	private final int PORT = 2026;
 	private final int HTTP_OK_STATUS = 200;
-	private final String NAME = "IntexServer";
+	private final long ID = random.nextLong();
 	
-	private Gson gson = new GsonBuilder().create();
 	private HttpServer server;
 	private Console console;
 	private Timer loop;
@@ -52,7 +55,7 @@ public class Server {
 			return;
 		}
 		server.setExecutor(null);
-
+		
 		server.createContext(Constants.UPDATE_CONTEXT, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
 				InputStream in = arg.getRequestBody();
@@ -60,7 +63,7 @@ public class Server {
 
 				Logger.log(user.getName() + " updates");
 
-				ServerResponse serverResponse = new ServerResponse(NAME);
+				ServerResponse serverResponse = new ServerResponse("ServerName");
 				String gsonString = gson.toJson(serverResponse, ServerResponse.class);
 				arg.sendResponseHeaders(HTTP_OK_STATUS, gsonString.length());
 				OutputStream output = arg.getResponseBody();
@@ -77,6 +80,14 @@ public class Server {
 				OutputStream output = arg.getResponseBody();
 				output.write(response.getBytes());
 				output.close();
+			}
+		});
+		
+		server.createContext(Constants.LOGIN_CONTEXT, new HttpHandler() {
+			public void handle(HttpExchange arg) throws IOException {
+				InputStream in = arg.getRequestBody();
+				User user = gson.fromJson(readInputStream(in), User.class);
+				Logger.log(user.getName() + " logged in");
 			}
 		});
 	}
