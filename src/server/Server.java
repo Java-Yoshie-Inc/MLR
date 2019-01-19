@@ -26,14 +26,15 @@ import client.User;
 import tools.Constants;
 import tools.Logger;
 import tools.Logger.Level;
+import tools.ServerData;
 import tools.Tools;
 
 public class Server {
 	
 	private static final int SERVERS_REACHABILITY_CHECK_DELAY = 15*1000;
-	private String IP = Tools.getIp();
-	private String LOCAL_IP = Tools.getLocalIp();
-	private int PORT = 2026;
+	private final int PORT = 2026;
+	private final String IP = Tools.getIp() + ":" + PORT;
+	private final String LOCAL_IP = Tools.getLocalIp() + ":" + PORT;
 	private final int HTTP_OK_STATUS = 200;
 	private final String NAME = "IntexServer";
 
@@ -124,15 +125,15 @@ public class Server {
 	private void checkServerReachability() throws IOException {
 		hasCheckedReachability = false;
 		
-		for(String server : Constants.SERVER_IPS) {
-			if(usePublicIP && server.equals(IP) || server.equals(LOCAL_IP)) {
+		for(ServerData server : Constants.SERVERS) {
+			if(usePublicIP && server.getIp().equals(IP) || server.getIp().equals(LOCAL_IP)) {
 				continue;
 			}
 			
 			Logger.log("Checking status of Server " + server);
 			
 			try {
-				String url = "http://" + server + ":" + PORT + Constants.REACHABILITY_CHECK_CONTEXT;
+				String url = "http://" + server.getIp() + Constants.REACHABILITY_CHECK_CONTEXT;
 				URL obj = new URL(url);
 				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -146,8 +147,10 @@ public class Server {
 
 				con.getInputStream();
 				
+				server.setOnline(true);
 				Logger.log("Server " + server + " is online");
 			} catch (ConnectException | FileNotFoundException e) {
+				server.setOnline(false);
 				Logger.log("Server " + server + " is down", Level.WARNING);
 			}
 		}

@@ -56,6 +56,12 @@ public class Client {
 		});
 		loop2.setInitialDelay(0);
 		loop2.start();
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void checkServerReachability() {
@@ -64,7 +70,7 @@ public class Client {
 				@Override
 				public void run() {
 					try {
-						String url = "http://" + server.getIp() + Constants.PORT + Constants.REACHABILITY_CHECK_CONTEXT;
+						String url = "http://" + server.getIp() + Constants.REACHABILITY_CHECK_CONTEXT;
 						URL obj = new URL(url);
 						HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 						
@@ -100,7 +106,7 @@ public class Client {
 		System.out.println(currentServer.getIp());
 		
 		try {
-			String url = "http://" + currentServer.getIp() + Constants.PORT + Constants.UPDATE_CONTEXT;
+			String url = "http://" + currentServer.getIp() + Constants.UPDATE_CONTEXT;
 			URL obj = new URL(url);
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 			

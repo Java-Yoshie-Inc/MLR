@@ -1,11 +1,15 @@
 package tools;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+
+import com.google.gson.GsonBuilder;
 
 public class Tools {
 	
@@ -29,6 +33,11 @@ public class Tools {
 		} catch (UnknownHostException e) {
 			return null;
 		}
+	}
+	
+	public static Settings readSettings() throws IOException {
+		String content = new String(Files.readAllBytes(new File("data/settings.txt").toPath()));
+		return new GsonBuilder().create().fromJson(content, Settings.class);
 	}
 	
 }

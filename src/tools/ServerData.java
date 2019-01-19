@@ -13,6 +13,11 @@ public class ServerData {
 		this.online = false;
 	}
 	
+	@Override
+	public String toString() {
+		return IP;
+	}
+	
 	public String getIp() {
 		return IP;
 	}

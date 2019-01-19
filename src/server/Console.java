@@ -9,7 +9,9 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.Timer;
 
 import tools.Logger;
@@ -67,7 +69,11 @@ class Console {
 		consoleArea.setEditable(false);
 		consoleArea.setLineWrap(true);
 		consoleArea.setWrapStyleWord(true);
-		mainPanel.add(consoleArea, BorderLayout.CENTER);
+		
+		JScrollPane scrollPane = new JScrollPane(consoleArea);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		mainPanel.add(scrollPane, BorderLayout.CENTER);
 		
 		frame.setVisible(true);
 	}
