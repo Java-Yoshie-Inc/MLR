@@ -1,1 +1,6 @@
-{"servers":[{"IP":"192.168.178.21:2026","PRIORITY":0,"online":false},{"IP":"192.168.178.31:2026","PRIORITY":1,"online":false}]}
+{
+"servers":[
+{"IP":"192.168.178.21:2026","PRIORITY":0,"online":false},
+{"IP":"192.168.178.31:2026","PRIORITY":1,"online":false}
+]
+}

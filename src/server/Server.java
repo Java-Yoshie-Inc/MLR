@@ -33,17 +33,14 @@ public class Server {
 	
 	private static final int SERVERS_REACHABILITY_CHECK_DELAY = 15*1000;
 	private final int PORT = 2026;
-	private final String IP = Tools.getIp() + ":" + PORT;
-	private final String LOCAL_IP = Tools.getLocalIp() + ":" + PORT;
 	private final int HTTP_OK_STATUS = 200;
 	private final String NAME = "IntexServer";
-
+	
 	private Gson gson = new GsonBuilder().create();
 	private HttpServer server;
 	private Console console;
 	private Timer loop;
 	
-	private boolean usePublicIP = false;
 	private boolean hasCheckedReachability = true;
 	
 
@@ -123,36 +120,41 @@ public class Server {
 	}
 	
 	private void checkServerReachability() throws IOException {
-		hasCheckedReachability = false;
-		
-		for(ServerData server : Constants.SERVERS) {
-			if(usePublicIP && server.getIp().equals(IP) || server.getIp().equals(LOCAL_IP)) {
-				continue;
+		try {
+			if(!Tools.hasInternet()) {
+				Logger.log("No internet connection", Level.WARNING);
+				return;
 			}
 			
-			Logger.log("Checking status of Server " + server);
+			hasCheckedReachability = false;
 			
-			try {
-				String url = "http://" + server.getIp() + Constants.REACHABILITY_CHECK_CONTEXT;
-				URL obj = new URL(url);
-				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-				con.setRequestMethod("POST");
-				con.setDoOutput(true);
-				con.setDoInput(true);
+			for(ServerData server : Constants.SERVERS) {
+				Logger.log("Checking status of Server " + server);
 				
-				OutputStream output = con.getOutputStream();
-				output.write("".getBytes());
-				output.close();
+				try {
+					String url = "http://" + server.getIp() + Constants.REACHABILITY_CHECK_CONTEXT;
+					URL obj = new URL(url);
+					HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-				con.getInputStream();
-				
-				server.setOnline(true);
-				Logger.log("Server " + server + " is online");
-			} catch (ConnectException | FileNotFoundException e) {
-				server.setOnline(false);
-				Logger.log("Server " + server + " is down", Level.WARNING);
+					con.setRequestMethod("POST");
+					con.setDoOutput(true);
+					con.setDoInput(true);
+					
+					OutputStream output = con.getOutputStream();
+					output.write("".getBytes());
+					output.close();
+
+					con.getInputStream();
+					
+					server.setOnline(true);
+					Logger.log("Server " + server + " is online");
+				} catch (ConnectException | FileNotFoundException e) {
+					server.setOnline(false);
+					Logger.log("Server " + server + " is down", Level.WARNING);
+				}
 			}
+		} catch (Exception e) {
+			Logger.log(e.getMessage(), Level.ERROR);
 		}
 		
 		hasCheckedReachability = true;
