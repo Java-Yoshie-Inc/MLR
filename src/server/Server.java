@@ -13,8 +13,11 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import com.google.gson.Gson;
@@ -43,6 +46,7 @@ public class Server {
 	private HttpServer server;
 	private Console console;
 	private Timer loop;
+	private List<User> users = new ArrayList<User>();
 	
 	private boolean hasCheckedReachability = true;
 	
@@ -51,7 +55,7 @@ public class Server {
 		try {
 			server = HttpServer.create(new InetSocketAddress(PORT), 0);
 		} catch (BindException e) {
-			Logger.log("Server is already running on this ip");
+			JOptionPane.showMessageDialog(null, "Server is already running on this ip");
 			return;
 		}
 		server.setExecutor(null);
@@ -60,7 +64,8 @@ public class Server {
 			public void handle(HttpExchange arg) throws IOException {
 				InputStream in = arg.getRequestBody();
 				User user = gson.fromJson(readInputStream(in), User.class);
-
+				login(user);
+				
 				Logger.log(user.getName() + " updates");
 
 				ServerResponse serverResponse = new ServerResponse("ServerName");
@@ -82,14 +87,13 @@ public class Server {
 				output.close();
 			}
 		});
-		
-		server.createContext(Constants.LOGIN_CONTEXT, new HttpHandler() {
-			public void handle(HttpExchange arg) throws IOException {
-				InputStream in = arg.getRequestBody();
-				User user = gson.fromJson(readInputStream(in), User.class);
-				Logger.log(user.getName() + " logged in");
-			}
-		});
+	}
+	
+	private void login(User user) {
+		if(!users.contains(user)) {
+			users.add(user);
+			Logger.log(user.getName() + " logged in");
+		}
 	}
 	
 	public void start() {
@@ -122,12 +126,17 @@ public class Server {
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
+						checkClientConnection();
 					}
 				}).start();
 			}
 		});
 		loop.setInitialDelay(0);
 		loop.start();
+	}
+	
+	private void checkClientConnection() {
+		
 	}
 	
 	private void checkServerReachability() throws IOException {

@@ -36,7 +36,6 @@ public class Client {
 	public Client() {
 		USER = new User();
 		checkServerReachability();
-		login();
 		loop();
 	}
 	
@@ -94,35 +93,6 @@ public class Client {
 				}
 			}).start();
 		}
-	}
-	
-	private void login() {
-		System.out.println("Loggin in...");
-		
-		while(true) {
-			ServerData currentServer = getCurrentServer();
-			if(currentServer == null) continue;
-			
-			try {
-				String url = "http://" + currentServer.getIp() + Constants.LOGIN_CONTEXT;
-				URL obj = new URL(url);
-				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-				
-				con.setRequestMethod("POST");
-				con.setDoOutput(true);
-				con.setDoInput(false);
-				
-				OutputStream output = con.getOutputStream();
-				output.write(gson.toJson(USER, USER.getClass()).getBytes());
-				output.close();
-				
-				break;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		System.out.println("Logged in");
 	}
 	
 	private void update() {
