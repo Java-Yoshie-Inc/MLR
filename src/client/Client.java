@@ -3,25 +3,25 @@ package client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.SocketTimeoutException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.Timer;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import main.Component;
 import server.ServerResponse;
 import tools.Constants;
+import tools.Context;
 import tools.ServerData;
 
-public class Client {
+public class Client extends Component {
 	
 	private final Gson gson = new GsonBuilder().create();
 	private final User USER;
@@ -70,24 +70,11 @@ public class Client {
 				@Override
 				public void run() {
 					try {
-						String url = "http://" + server.getIp() + Constants.REACHABILITY_CHECK_CONTEXT;
-						URL obj = new URL(url);
-						HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-						
-						con.setRequestMethod("POST");
-						con.setDoOutput(true);
-						con.setDoInput(true);
-						
-						OutputStream output = con.getOutputStream();
-						output.write("".getBytes());
-						output.close();
-						
-						con.getInputStream();
-						
+						Client.super.send(Context.REACHABILITY_CHECK, server.getIp(), "");
 						server.setOnline(true);
-					} catch (ConnectException | FileNotFoundException e) {
+					} catch (SocketTimeoutException | ConnectException e) {
 						server.setOnline(false);
-					} catch (IOException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
@@ -97,51 +84,31 @@ public class Client {
 	
 	private void update() {
 		ServerData currentServer = getCurrentServer();
-		
 		if(currentServer == null) return;
-		
 		System.out.println("Connecting to Server " + currentServer.getIp());
 		
 		try {
-			String url = "http://" + currentServer.getIp() + Constants.UPDATE_CONTEXT;
-			URL obj = new URL(url);
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-			
-			con.setRequestMethod("POST");
-			con.setDoOutput(true);
-			con.setDoInput(true);
-			
-			OutputStream output = con.getOutputStream();
-			output.write(gson.toJson(USER, USER.getClass()).getBytes());
-			output.close();
-			
-			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-			
-			StringBuffer gsonResponse = new StringBuffer();
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				gsonResponse.append(inputLine);
-			}
-			in.close();
-			
-			ServerResponse response = gson.fromJson(gsonResponse.toString(), ServerResponse.class);
-		} catch (Exception e) {
+			String gsonResponse = super.send(Context.UPDATE, currentServer.getIp(), USER);
+			ServerResponse response = gson.fromJson(gsonResponse, ServerResponse.class);
+			System.out.println("Response: " + response.getName());
+		} catch (SocketTimeoutException | ConnectException e) {
 			currentServer.setOnline(false);
 			update();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	private ServerData getCurrentServer() {
-		ServerData server = null;
-		for(ServerData s : Constants.SERVERS) {
+		List<ServerData> servers = Arrays.asList(Constants.SERVERS);
+		Collections.shuffle(servers);
+		for(ServerData s : servers) {
 			if(s.isOnline()) {
-				if(server == null || s.getPriority() < server.getPriority()) {
-					server = s;
-				}
+				return s;
 			}
 		}
-		if(server == null) System.out.println("All Servers all down ");
-		return server;
+		System.out.println("All Servers all down ");
+		return null;
 	}
 	
 }

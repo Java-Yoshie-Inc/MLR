@@ -23,6 +23,10 @@ public class Logger {
 		}
 		sb.append(text + System.lineSeparator());
 	}
+	
+	public static void log(Exception e) {
+		log(e.getClass() + " : " + e.getMessage(), Level.ERROR);
+	}
 
 	public static void log(String text) {
 		log(text, Level.INFO);
