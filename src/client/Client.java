@@ -27,7 +27,7 @@ public class Client extends Component {
 	private final User USER;
 	
 	private static final int UPDATE_DELAY = 500;
-	private static final int SERVER_REACHABILITY_CHECK_DELAY = 22*1000;
+	private static final int SERVER_REACHABILITY_CHECK_DELAY = 20*1000;
 	
 	public static void main(String[] args) throws IOException {
 		new Client();
@@ -66,19 +66,14 @@ public class Client extends Component {
 	
 	private void checkServerReachability() {
 		for(ServerData server : Constants.SERVERS) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						Client.super.send(Context.REACHABILITY_CHECK, server.getIp(), "");
-						server.setOnline(true);
-					} catch (SocketTimeoutException | ConnectException e) {
-						server.setOnline(false);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}).start();
+			try {
+				Client.super.send(Context.REACHABILITY_CHECK, server.getIp(), "");
+				server.setOnline(true);
+			} catch (SocketTimeoutException | ConnectException e) {
+				server.setOnline(false);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

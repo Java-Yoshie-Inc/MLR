@@ -1,17 +1,14 @@
 package tools;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Logger {
 	
-	private static final File file = new File(Constants.DATA_PATH + "log.txt");
+	private static final File file = new File(Constants.DATA_PATH + "log.log");
 	
 	public enum Level {
 		INFO, WARNING, ERROR
@@ -47,8 +44,10 @@ public class Logger {
 		Logger.sb.append(sb);
 		
 		try {
-			Files.write(Paths.get(file.toString()), sb.toString().getBytes(), StandardOpenOption.APPEND);
-		} catch (IOException e) {
+			PrintWriter writer = new PrintWriter(new FileOutputStream(file, true)); 
+			writer.append(sb.toString());
+			writer.close();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

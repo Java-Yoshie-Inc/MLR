@@ -3,6 +3,7 @@ package server;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,12 +21,14 @@ import javax.swing.Timer;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import com.sun.scenario.effect.impl.sw.sse.SSERendererDelegate;
 
 import client.ClientData;
 import client.User;
 import main.Component;
 import tools.Constants;
 import tools.Context;
+import tools.FileSaver;
 import tools.Logger;
 import tools.Logger.Level;
 import tools.Tools;
@@ -36,10 +39,11 @@ public class Server extends Component {
 	private static final Random random = new Random();
 	
 	private static final int SERVERS_REACHABILITY_CHECK_DELAY = 15*1000;
+	private static final int SYNCHRONIZATION_DELAY = 15*1000;
 	private final int PORT = 2026;
 	private final int HTTP_OK_STATUS = 200;
 	private final long ID = random.nextLong();
-	private static final long CLIENT_LOGOUT_TIME = 5*1000;
+	private static final int CLIENT_LOGOUT_TIME = 5*1000;
 	
 	private ServerData data;
 	private HttpServer server;
@@ -104,7 +108,22 @@ public class Server extends Component {
 				ServerData server = gson.fromJson(readInputStream(arg.getRequestBody()), ServerData.class);
 				Logger.log(server.getIp() + " tries to identify");
 				
-				String response  = gson.toJson(Server.this.ID, long.class);
+				String response = gson.toJson(Server.this.ID, long.class);
+				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
+				OutputStream output = arg.getResponseBody();
+				output.write(response.getBytes());
+				output.close();
+			}
+		});
+		
+		server.createContext(Context.SYNCHRONIZE, new HttpHandler() {
+			public void handle(HttpExchange arg) throws IOException {
+				FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
+				for(FileSaver file : files) {
+					
+				}
+				
+				String response  = "";
 				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
 				OutputStream output = arg.getResponseBody();
 				output.write(response.getBytes());
@@ -172,12 +191,28 @@ public class Server extends Component {
 		}
 	}
 	
+	private void synchronize() {
+		Logger.log("Synchronizing data...");
+		
+		for(ServerData server : Constants.SERVERS) {
+			if(server.equals(data) || !server.isOnline()) continue;
+			try {
+				super.send(Context.SYNCHRONIZE, server.getIp(), Tools.listFiles(Constants.DATA_PATH));
+			} catch (IOException e) {
+				Logger.log(e);
+			}
+		}
+	}
+	
 	public void start() {
 		server.start();
 		this.console = new Console(this);
 		Logger.log("Server started");
 		identify();
-		loop();
+		
+		loop(() -> checkServerReachability(), SERVERS_REACHABILITY_CHECK_DELAY, true);
+		loop(() -> synchronize(), SYNCHRONIZATION_DELAY, true);
+		loop(() -> checkClientConnection(), CLIENT_LOGOUT_TIME*2, true);
 	}
 	
 	public void stop() {
@@ -190,7 +225,7 @@ public class Server extends Component {
 		server.start();
 	}
 
-	private void loop() {
+	/*private void loop() {
 		loop = new Timer(SERVERS_REACHABILITY_CHECK_DELAY, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -198,14 +233,26 @@ public class Server extends Component {
 				
 				new Thread(new Runnable() {
 					public void run() {
-						try {
-							checkServerReachability();
-						} catch (IOException e) {
-							Logger.log(e);
-						}
+						checkServerReachability();
 						checkClientConnection();
 					}
 				}).start();
+			}
+		});
+		loop.setInitialDelay(0);
+		loop.start();
+	}*/
+	
+	private void loop(Runnable runnable, int delay, boolean thread) {
+		loop = new Timer(delay, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Thread t = new Thread(runnable);
+				if(thread) {
+					t.start();
+				} else {
+					t.run();
+				}
 			}
 		});
 		loop.setInitialDelay(0);
@@ -232,7 +279,7 @@ public class Server extends Component {
 	/**
 	 * Checks which server is online
 	 */
-	private void checkServerReachability() throws IOException {
+	private void checkServerReachability() {
 		try {
 			if(!Tools.hasInternet()) {
 				Logger.log("No internet connection", Level.WARNING);

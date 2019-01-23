@@ -1,8 +1,0 @@
-[23.01.19-16:24:54] Server started
-[23.01.19-16:24:57] WARNING: Server 192.168.178.31:2026 is down
-[23.01.19-16:24:57] 192.168.178.21:2026 tries to identify
-[23.01.19-16:24:57] Identified as 192.168.178.21:2026
-[23.01.19-16:24:57] Checking status of Server 192.168.178.31:2026
-[23.01.19-16:25:00] WARNING: Server 192.168.178.31:2026 is down
-[23.01.19-16:25:00] Checking status of Server 192.168.178.21:2026
-[23.01.19-16:25:00] Server 192.168.178.21:2026 is online

@@ -21,8 +21,8 @@ public abstract class Component {
 	protected final String send(String context, String ip, String gsonString) throws IOException {
 		URL obj = new URL("http://" + ip + context);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-		con.setConnectTimeout(3000);
-		//con.setReadTimeout(t);
+		con.setConnectTimeout(3*1000);
+		con.setReadTimeout(5*1000);
 		
 		con.setRequestMethod("POST");
 		con.setDoOutput(true);
