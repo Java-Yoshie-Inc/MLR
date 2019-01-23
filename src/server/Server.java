@@ -3,7 +3,6 @@ package server;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,7 +20,6 @@ import javax.swing.Timer;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import com.sun.scenario.effect.impl.sw.sse.SSERendererDelegate;
 
 import client.ClientData;
 import client.User;
@@ -193,6 +191,9 @@ public class Server extends Component {
 	}
 	
 	private void synchronize() {
+		ServerData preferredServer = getPreferredServer();
+		if(preferredServer == null || !preferredServer.equals(data)) return;
+		
 		Logger.log("Synchronizing data...");
 		Stopwatch stopwatch = new Stopwatch();
 		stopwatch.start();
@@ -230,24 +231,6 @@ public class Server extends Component {
 		Server server = new Server();
 		server.start();
 	}
-
-	/*private void loop() {
-		loop = new Timer(SERVERS_REACHABILITY_CHECK_DELAY, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent event) {
-				if(!hasCheckedReachability) return;
-				
-				new Thread(new Runnable() {
-					public void run() {
-						checkServerReachability();
-						checkClientConnection();
-					}
-				}).start();
-			}
-		});
-		loop.setInitialDelay(0);
-		loop.start();
-	}*/
 	
 	private void loop(Runnable runnable, int delay, boolean thread) {
 		loop = new Timer(delay, new ActionListener() {
@@ -286,6 +269,8 @@ public class Server extends Component {
 	 * Checks which server is online
 	 */
 	private void checkServerReachability() {
+		if(!hasCheckedReachability) return;
+		
 		try {
 			if(!Tools.hasInternet()) {
 				Logger.log("No internet connection", Level.WARNING);
