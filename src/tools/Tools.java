@@ -38,7 +38,7 @@ public class Tools {
 	}
 	
 	public static Settings readSettings() throws IOException {
-		String content = new String(Files.readAllBytes(new File("data/settings.txt").toPath()));
+		String content = new String(Files.readAllBytes(new File(Constants.DATA_PATH + "settings.txt").toPath()));
 		return new GsonBuilder().create().fromJson(content, Settings.class);
 	}
 	
@@ -52,6 +52,26 @@ public class Tools {
 	    } catch (IOException e) {
 	        return false;
 	    }
+	}
+	
+	public static boolean equals(Object object1, Object object2) {
+		try {
+			Field[] fields1 = object1.getClass().getDeclaredFields();
+			Field[] fields2 = object2.getClass().getDeclaredFields();
+			for(int i=0; i < fields1.length; i++) {
+				fields1[i].setAccessible(true);
+				fields2[i].setAccessible(true);
+				Object field1 = fields1[i].get(object1);
+				Object field2 = fields2[i].get(object2);
+				if(!field1.equals(field2)) {
+					return false;
+				}
+			}
+			
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 }

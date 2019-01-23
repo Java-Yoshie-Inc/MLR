@@ -21,6 +21,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import client.ClientData;
 import client.User;
 import main.Component;
 import tools.Constants;
@@ -38,12 +39,13 @@ public class Server extends Component {
 	private final int PORT = 2026;
 	private final int HTTP_OK_STATUS = 200;
 	private final long ID = random.nextLong();
+	private static final long CLIENT_LOGOUT_TIME = 5*1000;
 	
 	private ServerData data;
 	private HttpServer server;
 	private Console console;
 	private Timer loop;
-	private List<User> users = new ArrayList<User>();
+	private List<ClientData> clients = new ArrayList<ClientData>();
 	
 	private boolean hasCheckedReachability = true;
 	
@@ -66,9 +68,11 @@ public class Server extends Component {
 				if(server != null) {
 					if(server.equals(Server.this.data)) {
 						User user = gson.fromJson(input, User.class);
-						
 						login(user);
-						Logger.log(user.getName() + " updates");
+						
+						ClientData client = getClient(user);
+						client.setLastUpdate();
+						Logger.log(client.getUser().getName() + " updates");
 					} else {
 						Logger.log("Some Server wants to update -> Server gets transferred");
 						Server.super.send(Context.UPDATE, server.getIp(), input);
@@ -110,8 +114,8 @@ public class Server extends Component {
 	}
 	
 	private void login(User user) {
-		if(!users.contains(user)) {
-			users.add(user);
+		if(getClient(user) == null) {
+			clients.add(new ClientData(user));
 			Logger.log(user.getName() + " logged in");
 		}
 	}
@@ -133,6 +137,14 @@ public class Server extends Component {
 		return server;
 	}
 	
+	private ClientData getClient(User user) {
+		for(ClientData client : clients) {
+			if(client.getUser().equals(user)) {
+				return client;
+			}
+		}
+		return null;
+	}
 	
 	/**
 	 * Server tries to find its ip
@@ -204,7 +216,17 @@ public class Server extends Component {
 	 * Checks whether client disconnected
 	 */
 	private void checkClientConnection() {
+		List<ClientData> toRemove = new ArrayList<ClientData>();
+		for(ClientData client : clients) {
+			if(System.currentTimeMillis() - client.getLastUpdate() >= CLIENT_LOGOUT_TIME) {
+				toRemove.add(client);
+			}
+		}
+		clients.removeAll(toRemove);
 		
+		for(ClientData client : toRemove) {
+			Logger.log(client.getUser().getName() + " logged out");
+		}
 	}
 	
 	/**

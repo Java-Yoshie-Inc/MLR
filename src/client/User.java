@@ -1,7 +1,5 @@
 package client;
 
-import java.lang.reflect.Field;
-
 import tools.Tools;
 
 public class User {
@@ -33,22 +31,7 @@ public class User {
 	
 	@Override
 	public boolean equals(Object obj) {
-		try {
-			Field[] fields1 = this.getClass().getDeclaredFields();
-			Field[] fields2 = obj.getClass().getDeclaredFields();
-			
-			for(int i=0; i < fields1.length; i++) {
-				Object field1 = fields1[i].get(this);
-				Object field2 = fields2[i].get(obj);
-				if(!field1.equals(field2)) {
-					return false;
-				}
-			}
-			
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		return Tools.equals(this, obj);
 	}
 	
 	public String getIp() {

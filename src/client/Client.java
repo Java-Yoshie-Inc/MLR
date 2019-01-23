@@ -94,7 +94,7 @@ public class Client extends Component {
 		} catch (SocketTimeoutException | ConnectException e) {
 			currentServer.setOnline(false);
 			update();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
