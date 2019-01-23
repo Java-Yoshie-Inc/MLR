@@ -3,6 +3,7 @@ package server;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -199,10 +200,20 @@ public class Server extends Component {
 		Stopwatch stopwatch = new Stopwatch();
 		stopwatch.start();
 		
+		File[] files = Tools.listFiles(Constants.SYNCHRONIZE);
+		FileSaver[] fileSavers = new FileSaver[files.length];
+		for(int i=0; i < files.length; i++) {
+			try {
+				fileSavers[i] = new FileSaver(files[i]);
+			} catch (IOException e) {
+				Logger.log(e);
+			}
+		}
+		
 		for(ServerData server : Constants.SERVERS) {
 			if(server.equals(data) || !server.isOnline()) continue;
 			try {
-				super.send(Context.SYNCHRONIZE, server.getIp(), Tools.listFiles(Constants.DATA_PATH));
+				super.send(Context.SYNCHRONIZE, server.getIp(), fileSavers);
 			} catch (IOException e) {
 				Logger.log(e);
 			}

@@ -10,7 +10,11 @@ public class FileSaver {
 	private final String content;
 	
 	public FileSaver(String file) throws IOException {
-		this.file = new File(file);
+		this(new File(file));
+	}
+	
+	public FileSaver(File file) throws IOException {
+		this.file = file;
 		this.content = new String(Files.readAllBytes(this.file.toPath()));
 	}
 
