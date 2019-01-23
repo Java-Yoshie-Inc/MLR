@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
@@ -118,9 +119,11 @@ public class Server extends Component {
 		server.createContext(Context.SYNCHRONIZE, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
 				FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
-				Logger.log("Receiving synchronizing data...");
+				Logger.log("Receiving synchronizing data - " + files.length + " updated");
 				for(FileSaver file : files) {
-					System.out.println(file.getFile().toString());
+					PrintWriter writer = new PrintWriter(file.getFile());
+					writer.write(file.getContent());
+					writer.close();
 				}
 				
 				String response  = "";
