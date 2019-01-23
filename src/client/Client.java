@@ -16,10 +16,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import main.Component;
+import server.ServerData;
 import server.ServerResponse;
 import tools.Constants;
 import tools.Context;
-import tools.ServerData;
 
 public class Client extends Component {
 	

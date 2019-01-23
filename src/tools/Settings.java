@@ -1,5 +1,7 @@
 package tools;
 
+import server.ServerData;
+
 public class Settings {
 	
 	private ServerData[] servers;

@@ -1,5 +1,6 @@
 package tools;
 
+import server.ServerData;
 import tools.Logger.Level;
 
 public class Constants {

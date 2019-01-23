@@ -27,7 +27,6 @@ import javax.swing.border.CompoundBorder;
 
 import tools.Constants;
 import tools.Logger;
-import tools.ServerData;
 
 class Console {
 	

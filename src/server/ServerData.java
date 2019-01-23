@@ -1,4 +1,4 @@
-package tools;
+package server;
 
 public class ServerData {
 	
