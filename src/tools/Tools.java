@@ -85,10 +85,11 @@ public class Tools {
 	}
 
 	public static void deleteDirectory(File dir) {
-		if (dir.isDirectory()) {
+		if(dir.isDirectory()) {
 			String[] children = dir.list();
-			for (int i = 0; i < children.length; i++)
+			for (int i = 0; i < children.length; i++) {
 				deleteDirectory(new File(dir, children[i]));
+			}
 		}
 		dir.delete();
 	}
