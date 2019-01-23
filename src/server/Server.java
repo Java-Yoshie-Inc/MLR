@@ -227,6 +227,7 @@ public class Server extends Component {
 	public void start() {
 		server.start();
 		this.console = new Console(this);
+		this.console.start();
 		Logger.log("Server started");
 		identify();
 		

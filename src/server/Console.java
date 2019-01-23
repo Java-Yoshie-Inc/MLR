@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -161,10 +162,18 @@ class Console {
 			scrollPane.setPreferredSize(new Dimension(0, 200));
 			mainPanel.add(scrollPane, BorderLayout.SOUTH);
 		}
-		
+	}
+	
+	public void start() {
 		frame.setVisible(true);
-		
 		consoleArea.requestFocus();
+	}
+	
+	private void updateFrame() {
+		SwingUtilities.updateComponentTreeUI(frame);
+		/*frame.invalidate();
+		frame.validate();
+		frame.repaint();*/
 	}
 	
 	private void loop() {
@@ -184,6 +193,8 @@ class Console {
 	}
 	
 	private void update() {
+		updateFrame();
+		
 		if(!consoleArea.getText().equals(Logger.getLog())) {
 			consoleArea.setText(Logger.getLog());
 		}
