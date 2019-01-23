@@ -31,6 +31,7 @@ import tools.Context;
 import tools.FileSaver;
 import tools.Logger;
 import tools.Logger.Level;
+import tools.Stopwatch;
 import tools.Tools;
 
 
@@ -38,7 +39,7 @@ public class Server extends Component {
 	
 	private static final Random random = new Random();
 	
-	private static final int SERVERS_REACHABILITY_CHECK_DELAY = 15*1000;
+	private static final int SERVERS_REACHABILITY_CHECK_DELAY = 30*1000;
 	private static final int SYNCHRONIZATION_DELAY = 15*1000;
 	private final int PORT = 2026;
 	private final int HTTP_OK_STATUS = 200;
@@ -193,6 +194,8 @@ public class Server extends Component {
 	
 	private void synchronize() {
 		Logger.log("Synchronizing data...");
+		Stopwatch stopwatch = new Stopwatch();
+		stopwatch.start();
 		
 		for(ServerData server : Constants.SERVERS) {
 			if(server.equals(data) || !server.isOnline()) continue;
@@ -202,6 +205,9 @@ public class Server extends Component {
 				Logger.log(e);
 			}
 		}
+		
+		stopwatch.stop();
+		Logger.log("Synchronizing finished - it took " + Tools.round(stopwatch.getDurationInSeconds(), 2) + "s");
 	}
 	
 	public void start() {

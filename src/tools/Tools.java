@@ -5,11 +5,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -70,7 +73,21 @@ public class Tools {
 		}
 		return files.toArray(new File[0]);
 	}
-
+	
+	public static String toString(double d) {
+		return new BigDecimal(d).toPlainString();
+	}
+	
+	public static double round(double d, int decimalPlaces) {
+		DecimalFormat df = new DecimalFormat("#." + repeat("#", decimalPlaces));
+		df.setRoundingMode(RoundingMode.CEILING);
+		return Double.valueOf(df.format(d));
+	}
+	
+	public static String repeat(String s, int count) {
+		return new String(new char[count]).replace("\0", s);
+	}
+	
 	public static boolean equals(Object object1, Object object2) {
 		try {
 			Field[] fields1 = object1.getClass().getDeclaredFields();
