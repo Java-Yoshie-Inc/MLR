@@ -4,12 +4,14 @@ public class ServerData {
 	
 	private final String IP;
 	private final int PRIORITY;
+	private final String NAME;
 	
 	private boolean online;
 	
-	public ServerData(String ip, int priority) {
+	public ServerData(String ip, int priority, String name) {
 		this.IP = ip;
 		this.PRIORITY = priority;
+		this.NAME = name;
 		this.online = false;
 	}
 	
@@ -29,6 +31,9 @@ public class ServerData {
 	}
 	public void setOnline(boolean b) {
 		this.online = b;
+	}
+	public String getName() {
+		return NAME;
 	}
 	
 }
