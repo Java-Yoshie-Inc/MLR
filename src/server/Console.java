@@ -49,6 +49,13 @@ class Console {
 	private static final int OFFSET = 25;
 	private static final int UPDATE_DELAY = 100;
 	
+	private ServerData selectedServer;
+	
+	private JLabel serverIpLabel;
+	private JLabel serverStatusLabel;
+	private JLabel serverPriorityLabel;
+	private JLabel serverNameLabel;
+	
 	
 	public Console(Server server) {
 		this.server = server;
@@ -114,6 +121,12 @@ class Console {
 		{
 			for(ServerData server : Constants.SERVERS) {
 				JButton button = new JButton("Server " + server.getIp());
+				button.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						selectedServer = server;
+					}
+				});
 				serverOverviewPanel.add(button);
 			}
 		}
@@ -139,13 +152,25 @@ class Console {
 		mainPanel.add(infoPanel, BorderLayout.CENTER);
 		
 		{
-			JLabel label1 = new JLabel("Info");
-			label1.setFont(TITLE_FONT);
-			infoPanel.add(label1);
+			JLabel label = new JLabel("Data");
+			label.setFont(TITLE_FONT);
+			infoPanel.add(label);
 			
-			JLabel label2 = new JLabel("IP = 234.256.76.34");
-			label2.setFont(TEXT_FONT);
-			infoPanel.add(label2);
+			serverIpLabel = new JLabel("");
+			serverIpLabel.setFont(TEXT_FONT);
+			infoPanel.add(serverIpLabel);
+			
+			serverNameLabel = new JLabel("");
+			serverNameLabel.setFont(TEXT_FONT);
+			infoPanel.add(serverNameLabel);
+			
+			serverStatusLabel = new JLabel("");
+			serverStatusLabel.setFont(TEXT_FONT);
+			infoPanel.add(serverStatusLabel);
+			
+			serverPriorityLabel = new JLabel("");
+			serverPriorityLabel.setFont(TEXT_FONT);
+			infoPanel.add(serverPriorityLabel);
 		}
 		
 		//
@@ -197,6 +222,13 @@ class Console {
 		
 		if(!consoleArea.getText().equals(Logger.getLog())) {
 			consoleArea.setText(Logger.getLog());
+		}
+		
+		if(selectedServer != null) {
+			serverIpLabel.setText("IP: " + selectedServer.getIp());
+			serverNameLabel.setText(selectedServer.getName());
+			serverStatusLabel.setText("Status: " + (selectedServer.isOnline() ? "online" : "offline"));
+			serverPriorityLabel.setText("Priority: Level " + selectedServer.getPriority());
 		}
 	}
 	
