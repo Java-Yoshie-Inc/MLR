@@ -119,26 +119,22 @@ public class Server extends Component {
 		
 		server.createContext(Context.SYNCHRONIZE, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
-				try {
-					FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
-					Logger.log("Receiving synchronizing data - " + files.length + " updated");
-					Tools.deleteDirectory(new File(Constants.SYNCHRONIZE));
-					new File(Constants.SYNCHRONIZE).mkdir();
-					
-					for(FileSaver file : files) {
-						PrintWriter writer = new PrintWriter(file.getFile());
-						writer.write(file.getContent());
-						writer.close();
-					}
-					
-					String response  = "";
-					arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
-					OutputStream output = arg.getResponseBody();
-					output.write(response.getBytes());
-					output.close();
-				} catch (Exception e) {
-					e.printStackTrace();
+				FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
+				Logger.log("Receiving synchronizing data - " + files.length + " updated");
+				Tools.deleteDirectory(new File(Constants.SYNCHRONIZE));
+				new File(Constants.SYNCHRONIZE).mkdir();
+				
+				for(FileSaver file : files) {
+					PrintWriter writer = new PrintWriter(file.getFile());
+					writer.write(file.getContent());
+					writer.close();
 				}
+				
+				String response  = "";
+				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
+				OutputStream output = arg.getResponseBody();
+				output.write(response.getBytes());
+				output.close();
 			}
 		});
 	}
