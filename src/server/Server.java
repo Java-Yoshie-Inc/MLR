@@ -121,6 +121,7 @@ public class Server extends Component {
 			public void handle(HttpExchange arg) throws IOException {
 				FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
 				Logger.log("Receiving synchronizing data - " + files.length + " updated");
+				Tools.deleteDirectory(new File(Constants.SYNCHRONIZE));
 				for(FileSaver file : files) {
 					PrintWriter writer = new PrintWriter(file.getFile());
 					writer.write(file.getContent());
@@ -232,22 +233,22 @@ public class Server extends Component {
 		Logger.log("Server started");
 		identify();
 		
-		loop(() -> checkServerReachability(), SERVERS_REACHABILITY_CHECK_DELAY, true);
-		loop(() -> synchronize(), SYNCHRONIZATION_DELAY, true);
-		loop(() -> checkClientConnection(), CLIENT_LOGOUT_TIME*2, true);
+		loop(() -> checkServerReachability(), SERVERS_REACHABILITY_CHECK_DELAY, true, false);
+		loop(() -> synchronize(), SYNCHRONIZATION_DELAY, true, true);
+		loop(() -> checkClientConnection(), CLIENT_LOGOUT_TIME*2, true, false);
 	}
 	
 	public void stop() {
 		loop.stop();
 		server.stop(0);
 	}
-
+	
 	public static void main(String[] args) throws IOException {
 		Server server = new Server();
 		server.start();
 	}
 	
-	private void loop(Runnable runnable, int delay, boolean thread) {
+	private void loop(Runnable runnable, int delay, boolean thread, boolean wait) {
 		loop = new Timer(delay, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
@@ -259,7 +260,9 @@ public class Server extends Component {
 				}
 			}
 		});
-		loop.setInitialDelay(0);
+		if(!wait) {
+			loop.setInitialDelay(0);
+		}
 		loop.start();
 	}
 	

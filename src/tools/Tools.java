@@ -73,21 +73,30 @@ public class Tools {
 		}
 		return files.toArray(new File[0]);
 	}
-	
+
 	public static String toString(double d) {
 		return new BigDecimal(d).toPlainString();
 	}
-	
+
 	public static double round(double d, int decimalPlaces) {
 		DecimalFormat df = new DecimalFormat("#." + repeat("#", decimalPlaces));
 		df.setRoundingMode(RoundingMode.CEILING);
 		return Double.valueOf(df.format(d).replace(',', '.'));
 	}
-	
+
+	public static void deleteDirectory(File dir) {
+		if (dir.isDirectory()) {
+			String[] children = dir.list();
+			for (int i = 0; i < children.length; i++)
+				deleteDirectory(new File(dir, children[i]));
+		}
+		dir.delete();
+	}
+
 	public static String repeat(String s, int count) {
 		return new String(new char[count]).replace("\0", s);
 	}
-	
+
 	public static boolean equals(Object object1, Object object2) {
 		try {
 			Field[] fields1 = object1.getClass().getDeclaredFields();
