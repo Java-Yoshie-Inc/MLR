@@ -6,12 +6,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Random;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public abstract class Component {
 	
+	protected static final Random random = new Random();
 	protected static final Gson gson = new GsonBuilder().create();
 	
 	public Component() {

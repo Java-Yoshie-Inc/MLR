@@ -12,9 +12,6 @@ import java.util.List;
 
 import javax.swing.Timer;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import main.Component;
 import server.ServerData;
 import server.ServerResponse;
@@ -23,7 +20,6 @@ import tools.Context;
 
 public class Client extends Component {
 	
-	private final Gson gson = new GsonBuilder().create();
 	private final User USER;
 	
 	private static final int UPDATE_DELAY = 500;

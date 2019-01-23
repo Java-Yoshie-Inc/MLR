@@ -8,13 +8,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -37,14 +36,12 @@ import tools.Tools;
 
 public class Server extends Component {
 	
-	private static final Random random = new Random();
-	
 	private static final int SERVERS_REACHABILITY_CHECK_DELAY = 30*1000;
 	private static final int SYNCHRONIZATION_DELAY = 15*1000;
-	private final int PORT = 2026;
-	private final int HTTP_OK_STATUS = 200;
-	private final long ID = random.nextLong();
+	private static final int PORT = 2026;
+	private static final int HTTP_OK_STATUS = 200;
 	private static final int CLIENT_LOGOUT_TIME = 5*1000;
+	private final long ID = random.nextLong();
 	
 	private ServerData data;
 	private HttpServer server;
@@ -125,9 +122,7 @@ public class Server extends Component {
 				new File(Constants.SYNCHRONIZE).mkdir();
 				
 				for(FileSaver file : files) {
-					PrintWriter writer = new PrintWriter(file.getFile());
-					writer.write(file.getContent());
-					writer.close();
+					Files.write(file.getFile().toPath(), file.getContent());
 				}
 				
 				String response  = "";
