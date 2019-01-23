@@ -49,7 +49,6 @@ public class Server extends Component {
 	private ServerData data;
 	private HttpServer server;
 	private Console console;
-	private Timer loop;
 	private List<ClientData> clients = new ArrayList<ClientData>();
 	
 	private boolean hasCheckedReachability = true;
@@ -60,6 +59,7 @@ public class Server extends Component {
 			server = HttpServer.create(new InetSocketAddress(PORT), 0);
 		} catch (BindException e) {
 			JOptionPane.showMessageDialog(null, "Server is already running on this ip");
+			stop();
 			return;
 		}
 		server.setExecutor(null);
@@ -235,13 +235,13 @@ public class Server extends Component {
 		Logger.log("Server started");
 		identify();
 		
+		//lambda is amazing #Best Java8 Feature
 		loop(() -> checkServerReachability(), SERVERS_REACHABILITY_CHECK_DELAY, true, false);
 		loop(() -> synchronize(), SYNCHRONIZATION_DELAY, true, true);
 		loop(() -> checkClientConnection(), CLIENT_LOGOUT_TIME*2, true, false);
 	}
 	
 	public void stop() {
-		loop.stop();
 		server.stop(0);
 	}
 	
@@ -251,7 +251,7 @@ public class Server extends Component {
 	}
 	
 	private void loop(Runnable runnable, int delay, boolean thread, boolean wait) {
-		loop = new Timer(delay, new ActionListener() {
+		Timer loop = new Timer(delay, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				Thread t = new Thread(runnable);
