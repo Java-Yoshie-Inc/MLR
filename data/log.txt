@@ -19,3 +19,108 @@
 [23.01.19-16:11:03] WARNING: Server 192.168.178.31:2026 is down
 [23.01.19-16:11:03] Checking status of Server 192.168.178.21:2026
 [23.01.19-16:11:03] Server 192.168.178.21:2026 is online
+[23.01.19-16:14:32] Server started
+[23.01.19-16:14:32] 192.168.178.31:2026 tries to identify
+[23.01.19-16:14:33] Identified as 192.168.178.31:2026
+[23.01.19-16:14:33] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:14:33] Server 192.168.178.31:2026 is online
+[23.01.19-16:14:33] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:14:36] WARNING: Server 192.168.178.21:2026 is down
+[23.01.19-16:14:48] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:14:48] Server 192.168.178.31:2026 is online
+[23.01.19-16:14:48] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:14:51] WARNING: Server 192.168.178.21:2026 is down
+[23.01.19-16:15:03] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:15:03] Server 192.168.178.31:2026 is online
+[23.01.19-16:15:03] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:15:06] WARNING: Server 192.168.178.21:2026 is down
+[23.01.19-16:15:14] 192.168.178.31:2026 tries to identify
+[23.01.19-16:15:18] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:15:18] Server 192.168.178.31:2026 is online
+[23.01.19-16:15:18] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:15:18] Server 192.168.178.21:2026 is online
+[23.01.19-16:15:33] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:15:33] Server 192.168.178.31:2026 is online
+[23.01.19-16:15:33] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:15:33] Server 192.168.178.21:2026 is online
+[23.01.19-16:15:48] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:15:48] Server 192.168.178.31:2026 is online
+[23.01.19-16:15:48] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:15:48] Server 192.168.178.21:2026 is online
+[23.01.19-16:16:03] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:16:03] Server 192.168.178.31:2026 is online
+[23.01.19-16:16:03] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:16:03] Server 192.168.178.21:2026 is online
+[23.01.19-16:16:18] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:16:18] Server 192.168.178.31:2026 is online
+[23.01.19-16:16:18] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:16:18] Server 192.168.178.21:2026 is online
+[23.01.19-16:16:20] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:22] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:23] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:24] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:25] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:25] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:27] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:28] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:29] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:30] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:32] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:33] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:33] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:16:33] Server 192.168.178.31:2026 is online
+[23.01.19-16:16:33] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:16:33] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:33] Server 192.168.178.21:2026 is online
+[23.01.19-16:16:34] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:35] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:36] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:37] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:38] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:39] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:40] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:41] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:41] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:42] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:43] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:45] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:46] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:47] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:48] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:48] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:16:48] Server 192.168.178.31:2026 is online
+[23.01.19-16:16:48] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:16:48] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:48] Server 192.168.178.21:2026 is online
+[23.01.19-16:16:50] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:52] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:52] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:53] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:54] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:55] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:56] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:58] Some Server wants to update -> Server gets transferred
+[23.01.19-16:16:59] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:00] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:01] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:02] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:03] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:17:03] Server 192.168.178.31:2026 is online
+[23.01.19-16:17:03] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:17:03] Server 192.168.178.21:2026 is online
+[23.01.19-16:17:04] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:04] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:05] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:06] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:07] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:10] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:11] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:11] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:15] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:17] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:18] Some Server wants to update -> Server gets transferred
+[23.01.19-16:17:18] Checking status of Server 192.168.178.31:2026
+[23.01.19-16:17:18] Server 192.168.178.31:2026 is online
+[23.01.19-16:17:18] Checking status of Server 192.168.178.21:2026
+[23.01.19-16:17:18] Server 192.168.178.21:2026 is online
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
