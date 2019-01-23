@@ -81,7 +81,7 @@ public class Tools {
 	public static double round(double d, int decimalPlaces) {
 		DecimalFormat df = new DecimalFormat("#." + repeat("#", decimalPlaces));
 		df.setRoundingMode(RoundingMode.CEILING);
-		return Double.valueOf(df.format(d));
+		return Double.valueOf(df.format(d).replace(',', '.'));
 	}
 	
 	public static String repeat(String s, int count) {

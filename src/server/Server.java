@@ -118,8 +118,9 @@ public class Server extends Component {
 		server.createContext(Context.SYNCHRONIZE, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
 				FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
+				Logger.log("Receiving synchronizing data...");
 				for(FileSaver file : files) {
-					
+					System.out.println(file.getFile().toString());
 				}
 				
 				String response  = "";
