@@ -1,0 +1,6 @@
+{
+"servers":[
+{"IP":"77.6.157.214:2026","PRIORITY":1,"online":false,"NAME":"Ron Server"},
+{"IP":"yourip","PRIORITY":0,"online":false,"NAME":"Maxwell Server"}
+]
+}

@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -309,6 +310,8 @@ public class Server extends Component {
 				} catch (SocketTimeoutException e) {
 					server.setOnline(false);
 					Logger.log("Server " + server + " is down", Level.WARNING);
+				} catch (UnknownHostException e) {
+					Logger.log("Unknown Adress: " + server.getIp());
 				}
 			}
 		} catch (Exception e) {
