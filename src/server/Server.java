@@ -77,7 +77,7 @@ public class Server extends Component {
 						Logger.log(client.getUser().getName() + " updates");
 					} else {
 						Logger.log("Some Server wants to update -> Server gets transferred");
-						Server.super.send(Context.UPDATE, server.getIp(), input, 3, 5);
+						Server.super.send(Context.UPDATE, server.getIp(), input, 3000, 5000);
 					}
 				}
 
@@ -180,7 +180,7 @@ public class Server extends Component {
 	private void identify() {
 		for (ServerData server : Constants.SERVERS) {
 			try {
-				String gsonResponse = super.send(Context.SERVER_IDENTIFY, server.getIp(), server, 3, 5);
+				String gsonResponse = super.send(Context.SERVER_IDENTIFY, server.getIp(), server, 3000, 5000);
 				long response = gson.fromJson(gsonResponse, long.class);
 				if (response == this.ID) {
 					this.data = server;
@@ -223,7 +223,7 @@ public class Server extends Component {
 			if (server.equals(data) || !server.isOnline())
 				continue;
 			try {
-				super.send(Context.SYNCHRONIZE, server.getIp(), fileSavers, 3, 5);
+				super.send(Context.SYNCHRONIZE, server.getIp(), fileSavers, 3000, 5000);
 			} catch (IOException e) {
 				Logger.log(e);
 			}
@@ -309,7 +309,7 @@ public class Server extends Component {
 				Logger.log("Checking status of Server " + server);
 
 				try {
-					super.send(Context.REACHABILITY_CHECK, server.getIp(), "", 3, 5);
+					super.send(Context.REACHABILITY_CHECK, server.getIp(), "", 3000, 5000);
 					server.setOnline(true);
 					Logger.log("Server " + server + " is online");
 				} catch (SocketTimeoutException e) { // is not reachable

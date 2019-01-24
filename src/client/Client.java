@@ -63,7 +63,7 @@ public class Client extends Component {
 	private void checkServerReachability() {
 		for(ServerData server : Constants.SERVERS) {
 			try {
-				Client.super.send(Context.REACHABILITY_CHECK, server.getIp(), "", 3, 5);
+				Client.super.send(Context.REACHABILITY_CHECK, server.getIp(), "", 3000, 5000);
 				server.setOnline(true);
 			} catch (SocketTimeoutException | ConnectException e) {
 				server.setOnline(false);
@@ -79,7 +79,7 @@ public class Client extends Component {
 		System.out.println("Connecting to Server " + currentServer.getIp());
 		
 		try {
-			String gsonResponse = super.send(Context.UPDATE, currentServer.getIp(), USER, 3, 5);
+			String gsonResponse = super.send(Context.UPDATE, currentServer.getIp(), USER, 3000, 5000);
 			ServerResponse response = gson.fromJson(gsonResponse, ServerResponse.class);
 			System.out.println("Response: " + response.getName());
 		} catch (SocketTimeoutException | ConnectException e) {
