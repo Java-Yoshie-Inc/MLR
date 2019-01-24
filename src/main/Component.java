@@ -20,11 +20,11 @@ public abstract class Component {
 		
 	}
 	
-	protected final String send(String context, String ip, String gsonString) throws IOException {
+	protected final String send(String context, String ip, String gsonString, int connectTimeout, int readTimeout) throws IOException {
 		URL obj = new URL("http://" + ip + context);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-		con.setConnectTimeout(3*1000);
-		con.setReadTimeout(5*1000);
+		con.setConnectTimeout(connectTimeout);
+		con.setReadTimeout(readTimeout);
 		
 		con.setRequestMethod("POST");
 		con.setDoOutput(true);
@@ -46,8 +46,8 @@ public abstract class Component {
 		return gsonResponse.toString();
 	}
 	
-	protected final String send(String context, String ip, Object object) throws IOException {
-		return send(context, ip, gson.toJson(object, object.getClass()));
+	protected final String send(String context, String ip, Object object, int connectTimeout, int readTimeout) throws IOException {
+		return send(context, ip, gson.toJson(object, object.getClass()), connectTimeout, readTimeout);
 	}
 	
 }
