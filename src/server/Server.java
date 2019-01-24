@@ -117,7 +117,7 @@ public class Server extends Component {
 				FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
 				Logger.log("Receiving synchronizing data - " + files.length + " updated");
 
-				processSynchronizeFiles(files);
+				saveSynchronizeFiles(files);
 
 				String response = "";
 				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
@@ -126,21 +126,18 @@ public class Server extends Component {
 				output.close();
 			}
 		});
-	}
-
-	private void processSynchronizeFiles(FileSaver[] files) throws IOException {
-		Tools.deleteDirectory(new File(Constants.SYNCHRONIZE));
-		new File(Constants.SYNCHRONIZE).mkdir();
-		for (FileSaver file : files) {
-			FileOutputStream out = new FileOutputStream(file.getFile());
-			out.write(file.getContent());
-			out.close();
-			// Files.write(file.getFile().toPath(), file.getContent());
-		}
-	}
-	
-	private void requestSynchronization() {
 		
+		server.createContext(Context.REQUEST_SYNCHRONIZATION, new HttpHandler() {
+			public void handle(HttpExchange arg) throws IOException {
+				arg.getRequestBody();
+				FileSaver[] files = getSynchronizeFiles();
+				String response = gson.toJson(files, files.getClass());
+				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
+				OutputStream output = arg.getResponseBody();
+				output.write(response.getBytes());
+				output.close();
+			}
+		});
 	}
 	
 	private void login(User user) {
@@ -201,43 +198,11 @@ public class Server extends Component {
 			Logger.log("Identified as " + data);
 		}
 	}
-
-	private void synchronize() {
-		ServerData preferredServer = getPreferredServer();
-		if (preferredServer == null || !preferredServer.equals(data)) return;
-
-		Logger.log("Synchronizing data...");
-		
-		//stopwatch
-		Stopwatch stopwatch = new Stopwatch();
-		stopwatch.start();
-		
-		//get files of folder
-		File[] files = Tools.listFiles(Constants.SYNCHRONIZE);
-		FileSaver[] fileSavers = new FileSaver[files.length];
-		for (int i = 0; i < files.length; i++) {
-			try {
-				fileSavers[i] = new FileSaver(files[i]);
-			} catch (IOException e) {
-				Logger.log(e);
-			}
-		}
-		
-		//send files to each server
-		for (ServerData server : Constants.SERVERS) {
-			if (server.equals(data) || !server.isOnline())
-				continue;
-			try {
-				super.send(Context.SYNCHRONIZE, server.getIp(), fileSavers, 0, 0);
-			} catch (IOException e) {
-				Logger.log(e);
-			}
-		}
-
-		stopwatch.stop();
-		Logger.log("Synchronizing finished - it took " + Tools.round(stopwatch.getDurationInSeconds(), 2) + "s");
+	
+	private boolean isPrimary() {
+		return getPreferredServer() == this.data;
 	}
-
+	
 	public void start() {
 		server.start();
 		Logger.log("Server started");
@@ -245,7 +210,10 @@ public class Server extends Component {
 		this.console = new Console(this);
 		this.console.start();
 		
+		while(!Tools.hasInternet());
+		checkServerReachability();
 		identify();
+		//requestSynchronization();
 
 		// lambda is amazing #Best Java8 Feature
 		loop(() -> checkServerReachability(), SERVERS_REACHABILITY_CHECK_DELAY, true, false);
@@ -309,9 +277,9 @@ public class Server extends Component {
 				Logger.log("No internet connection", Level.WARNING);
 				return;
 			}
-
+			
 			hasCheckedReachability = false;
-
+			
 			for (ServerData server : Constants.SERVERS) {
 				Logger.log("Checking status of Server " + server);
 				
@@ -333,7 +301,75 @@ public class Server extends Component {
 
 		hasCheckedReachability = true;
 	}
+	
+	private void saveSynchronizeFiles(FileSaver[] files) throws IOException {
+		Tools.deleteDirectory(new File(Constants.SYNCHRONIZE));
+		new File(Constants.SYNCHRONIZE).mkdir();
+		for (FileSaver file : files) {
+			FileOutputStream out = new FileOutputStream(file.getFile());
+			out.write(file.getContent());
+			out.close();
+			// Files.write(file.getFile().toPath(), file.getContent());
+		}
+	}
+	
+	/**
+	 * returns synchronizable files
+	 */
+	private FileSaver[] getSynchronizeFiles() {
+		File[] files = Tools.listFiles(Constants.SYNCHRONIZE);
+		FileSaver[] fileSavers = new FileSaver[files.length];
+		for (int i = 0; i < files.length; i++) {
+			try {
+				fileSavers[i] = new FileSaver(files[i]);
+			} catch (IOException e) {
+				Logger.log(e);
+			}
+		}
+		return fileSavers;
+	}
+	
+	private void requestSynchronization() {
+		if(isPrimary()) {
+			for(ServerData server : Constants.SERVERS) {
+				try {
+					String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 3000, 5000);
+					FileSaver[] files = gson.fromJson(gsonResponse, FileSaver[].class);
+					saveSynchronizeFiles(files);
+				} catch (IOException e) {
+					Logger.log(e);
+				}
+			}
+		}
+	}
+	
+	private void synchronize() {
+		ServerData preferredServer = getPreferredServer();
+		if (preferredServer == null || !preferredServer.equals(data)) return;
 
+		Logger.log("Synchronizing data...");
+		
+		//stopwatch
+		Stopwatch stopwatch = new Stopwatch();
+		stopwatch.start();
+		
+		FileSaver[] files = getSynchronizeFiles();
+		
+		//send files to each server
+		for (ServerData server : Constants.SERVERS) {
+			if (server.equals(data) || !server.isOnline())
+				continue;
+			try {
+				super.send(Context.SYNCHRONIZE, server.getIp(), files, 0, 0);
+			} catch (IOException e) {
+				Logger.log(e);
+			}
+		}
+
+		stopwatch.stop();
+		Logger.log("Synchronizing finished - it took " + Tools.round(stopwatch.getDurationInSeconds(), 2) + "s");
+	}
+	
 	/**
 	 * Converts InputStream to String
 	 */
