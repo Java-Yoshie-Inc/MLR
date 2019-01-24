@@ -138,7 +138,11 @@ public class Server extends Component {
 			// Files.write(file.getFile().toPath(), file.getContent());
 		}
 	}
-
+	
+	private void requestSynchronization() {
+		
+	}
+	
 	private void login(User user) {
 		if (getClient(user) == null) {
 			clients.add(new ClientData(user));
