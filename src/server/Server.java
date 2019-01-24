@@ -307,10 +307,11 @@ public class Server extends Component {
 					super.send(Context.REACHABILITY_CHECK, server.getIp(), "");
 					server.setOnline(true);
 					Logger.log("Server " + server + " is online");
-				} catch (SocketTimeoutException e) {
+				} catch (SocketTimeoutException e) { //is not reachable
 					server.setOnline(false);
 					Logger.log("Server " + server + " is down", Level.WARNING);
-				} catch (UnknownHostException e) {
+				} catch (UnknownHostException e) { //host does not exist
+					server.setOnline(false);
 					Logger.log("Unknown Adress: " + server.getIp());
 				}
 			}
