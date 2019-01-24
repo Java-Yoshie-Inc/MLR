@@ -213,7 +213,7 @@ public class Server extends Component {
 		while(!Tools.hasInternet());
 		checkServerReachability();
 		identify();
-		//requestSynchronization();
+		requestSynchronization();
 
 		// lambda is amazing #Best Java8 Feature
 		loop(() -> checkServerReachability(), SERVERS_REACHABILITY_CHECK_DELAY, true, false);
@@ -331,6 +331,8 @@ public class Server extends Component {
 	
 	private void requestSynchronization() {
 		if(isPrimary()) {
+			Logger.log("Requesting synchronizable files...");
+			
 			for(ServerData server : Constants.SERVERS) {
 				try {
 					String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 3000, 5000);
@@ -340,6 +342,8 @@ public class Server extends Component {
 					Logger.log(e);
 				}
 			}
+			
+			Logger.log("Requesting synchronizable files finished...");
 		}
 	}
 	
