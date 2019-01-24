@@ -116,9 +116,9 @@ public class Server extends Component {
 			public void handle(HttpExchange arg) throws IOException {
 				FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
 				Logger.log("Receiving synchronizing data - " + files.length + " updated");
-
-				saveSynchronizeFiles(files);
-
+				
+				if(!isPrimary()) saveSynchronizeFiles(files);
+				
 				String response = "";
 				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
 				OutputStream output = arg.getResponseBody();
@@ -360,7 +360,7 @@ public class Server extends Component {
 			if (server.equals(data) || !server.isOnline())
 				continue;
 			try {
-				super.send(Context.SYNCHRONIZE, server.getIp(), files, 0, 0);
+				super.send(Context.SYNCHRONIZE, server.getIp(), files, 3000, 5000);
 			} catch (IOException e) {
 				Logger.log(e);
 			}
