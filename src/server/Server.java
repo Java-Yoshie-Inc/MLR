@@ -118,12 +118,8 @@ public class Server extends Component {
 			public void handle(HttpExchange arg) throws IOException {
 				FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
 				Logger.log("Receiving synchronizing data - " + files.length + " updated");
-				Tools.deleteDirectory(new File(Constants.SYNCHRONIZE));
-				new File(Constants.SYNCHRONIZE).mkdir();
 				
-				for(FileSaver file : files) {
-					Files.write(file.getFile().toPath(), file.getContent());
-				}
+				processSynchronizeFiles(files);
 				
 				String response  = "";
 				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
@@ -132,6 +128,14 @@ public class Server extends Component {
 				output.close();
 			}
 		});
+	}
+	
+	private void processSynchronizeFiles(FileSaver[] files) throws IOException {
+		Tools.deleteDirectory(new File(Constants.SYNCHRONIZE));
+		new File(Constants.SYNCHRONIZE).mkdir();
+		for(FileSaver file : files) {
+			Files.write(file.getFile().toPath(), file.getContent());
+		}
 	}
 	
 	private void login(User user) {
