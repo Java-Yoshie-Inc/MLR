@@ -335,7 +335,7 @@ public class Server extends Component {
 			
 			for(ServerData server : Constants.SERVERS) {
 				try {
-					String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 3000, 5000);
+					String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 5000, 5000);
 					FileSaver[] files = gson.fromJson(gsonResponse, FileSaver[].class);
 					saveSynchronizeFiles(files);
 				} catch (IOException e) {
