@@ -13,7 +13,6 @@ import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,6 @@ import client.ClientData;
 import client.User;
 import main.Component;
 import tools.Constants;
-import tools.Context;
 import tools.FileSaver;
 import tools.Logger;
 import tools.Logger.Level;
@@ -60,7 +58,7 @@ public class Server extends Component {
 			return;
 		}
 		server.setExecutor(null);
-
+		
 		server.createContext(Context.UPDATE, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
 				InputStream in = arg.getRequestBody();
@@ -202,13 +200,15 @@ public class Server extends Component {
 
 	private void synchronize() {
 		ServerData preferredServer = getPreferredServer();
-		if (preferredServer == null || !preferredServer.equals(data))
-			return;
+		if (preferredServer == null || !preferredServer.equals(data)) return;
 
 		Logger.log("Synchronizing data...");
+		
+		//stopwatch
 		Stopwatch stopwatch = new Stopwatch();
 		stopwatch.start();
-
+		
+		//get files of folder
 		File[] files = Tools.listFiles(Constants.SYNCHRONIZE);
 		FileSaver[] fileSavers = new FileSaver[files.length];
 		for (int i = 0; i < files.length; i++) {
@@ -218,12 +218,13 @@ public class Server extends Component {
 				Logger.log(e);
 			}
 		}
-
+		
+		//send files to each server
 		for (ServerData server : Constants.SERVERS) {
 			if (server.equals(data) || !server.isOnline())
 				continue;
 			try {
-				super.send(Context.SYNCHRONIZE, server.getIp(), fileSavers, 3000, 5000);
+				super.send(Context.SYNCHRONIZE, server.getIp(), fileSavers, 0, 0);
 			} catch (IOException e) {
 				Logger.log(e);
 			}
@@ -235,9 +236,11 @@ public class Server extends Component {
 
 	public void start() {
 		server.start();
+		Logger.log("Server started");
+		
 		this.console = new Console(this);
 		this.console.start();
-		Logger.log("Server started");
+		
 		identify();
 
 		// lambda is amazing #Best Java8 Feature
@@ -307,7 +310,7 @@ public class Server extends Component {
 
 			for (ServerData server : Constants.SERVERS) {
 				Logger.log("Checking status of Server " + server);
-
+				
 				try {
 					super.send(Context.REACHABILITY_CHECK, server.getIp(), "", 3000, 5000);
 					server.setOnline(true);
