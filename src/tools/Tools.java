@@ -75,7 +75,11 @@ public class Tools {
 		}
 		return files.toArray(new File[0]);
 	}
-
+	
+	public static String getMethodName(int steps) {
+		return new Throwable().getStackTrace()[steps+1].getMethodName();
+	}
+	
 	public static String toString(double d) {
 		return new BigDecimal(d).toPlainString();
 	}

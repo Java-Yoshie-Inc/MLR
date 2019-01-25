@@ -2,14 +2,14 @@ package server;
 
 public class ServerResponse {
 	
-	private final String NAME;
+	private final ServerData server;
 	
-	public ServerResponse(String name) {
-		this.NAME = name;
+	public ServerResponse(ServerData server) {
+		this.server = server;
 	}
 	
-	public String getName() {
-		return this.NAME;
+	public ServerData getServer() {
+		return this.server;
 	}
 	
 }

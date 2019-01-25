@@ -17,7 +17,7 @@ public class ServerData {
 	
 	@Override
 	public String toString() {
-		return IP;
+		return NAME + " - " + IP;
 	}
 	
 	public String getIp() {

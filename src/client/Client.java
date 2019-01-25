@@ -81,7 +81,7 @@ public class Client extends Component {
 		try {
 			String gsonResponse = super.send(Context.UPDATE, currentServer.getIp(), USER, 3000, 5000);
 			ServerResponse response = gson.fromJson(gsonResponse, ServerResponse.class);
-			System.out.println("Response: " + response.getName());
+			System.out.println("Response: " + response.getServer());
 		} catch (SocketTimeoutException | ConnectException e) {
 			currentServer.setOnline(false);
 			update();
