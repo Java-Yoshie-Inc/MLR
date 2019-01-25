@@ -28,8 +28,8 @@ import client.User;
 import main.Component;
 import tools.Constants;
 import tools.FileSaver;
+import tools.Level;
 import tools.Logger;
-import tools.Logger.Level;
 import tools.Stopwatch;
 import tools.Tools;
 
@@ -37,7 +37,6 @@ public class Server extends Component {
 
 	private static final int SERVERS_REACHABILITY_CHECK_DELAY = 30 * 1000;
 	private static final int SYNCHRONIZATION_DELAY = 15 * 1000;
-	private static final int PORT = 2026;
 	private static final int HTTP_OK_STATUS = 200;
 	private static final int CLIENT_LOGOUT_TIME = 5 * 1000;
 	private final long ID = random.nextLong();
@@ -51,7 +50,7 @@ public class Server extends Component {
 
 	public Server() throws IOException {
 		try {
-			server = HttpServer.create(new InetSocketAddress(PORT), 0);
+			server = HttpServer.create(new InetSocketAddress(Constants.settings.getPort()), 0);
 		} catch (BindException e) {
 			JOptionPane.showMessageDialog(null, "Server is already running on this ip");
 			stop();
@@ -74,7 +73,7 @@ public class Server extends Component {
 						client.setLastUpdate();
 						Logger.log(client.getUser().getName() + " updates");
 					} else {
-						Logger.log("Some Server wants to update -> Server gets transferred");
+						Logger.log("Some Server wants to update => Server gets transferred");
 						Server.super.send(Context.UPDATE, server.getIp(), input, 3000, 5000);
 					}
 				}
@@ -152,7 +151,7 @@ public class Server extends Component {
 	 */
 	private ServerData getPreferredServer() {
 		ServerData server = null;
-		for (ServerData s : Constants.SERVERS) {
+		for (ServerData s : Constants.settings.getServers()) {
 			if (s.isOnline()) {
 				if (server == null || s.getPriority() < server.getPriority()) {
 					server = s;
@@ -177,7 +176,7 @@ public class Server extends Component {
 	 * Server tries to find its ip
 	 */
 	private void identify() {
-		for (ServerData server : Constants.SERVERS) {
+		for (ServerData server : Constants.settings.getServers()) {
 			try {
 				String gsonResponse = super.send(Context.SERVER_IDENTIFY, server.getIp(), server, 3000, 5000);
 				long response = gson.fromJson(gsonResponse, long.class);
@@ -280,7 +279,7 @@ public class Server extends Component {
 			
 			hasCheckedReachability = false;
 			
-			for (ServerData server : Constants.SERVERS) {
+			for (ServerData server : Constants.settings.getServers()) {
 				Logger.log("Checking status of Server " + server);
 				
 				try {
@@ -333,7 +332,7 @@ public class Server extends Component {
 		if(isPrimary()) {
 			Logger.log("Requesting synchronizable files...");
 			
-			for(ServerData server : Constants.SERVERS) {
+			for(ServerData server : Constants.settings.getServers()) {
 				try {
 					String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 5000, 5000);
 					FileSaver[] files = gson.fromJson(gsonResponse, FileSaver[].class);
@@ -360,7 +359,7 @@ public class Server extends Component {
 		FileSaver[] files = getSynchronizeFiles();
 		
 		//send files to each server
-		for (ServerData server : Constants.SERVERS) {
+		for (ServerData server : Constants.settings.getServers()) {
 			if (server.equals(data) || !server.isOnline())
 				continue;
 			try {

@@ -10,10 +10,6 @@ public class Logger {
 	
 	private static final File file = new File(Constants.DATA_PATH + "log.log");
 	
-	public enum Level {
-		INFO, WARNING, ERROR
-	}
-	
 	static {
 		long length = file.length();
 		if(length > 100000) {
@@ -41,7 +37,10 @@ public class Logger {
 			sb.append(level + ": ");
 		}
 		sb.append(text + System.lineSeparator());
-		Logger.sb.append(sb);
+		
+		if(level.display()) {
+			Logger.sb.append(sb);
+		}
 		
 		try {
 			PrintWriter writer = new PrintWriter(new FileOutputStream(file, true)); 

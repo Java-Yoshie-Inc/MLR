@@ -61,7 +61,7 @@ public class Client extends Component {
 	}
 	
 	private void checkServerReachability() {
-		for(ServerData server : Constants.SERVERS) {
+		for(ServerData server : Constants.settings.getServers()) {
 			try {
 				Client.super.send(Context.REACHABILITY_CHECK, server.getIp(), "", 3000, 5000);
 				server.setOnline(true);
@@ -91,7 +91,7 @@ public class Client extends Component {
 	}
 	
 	private ServerData getCurrentServer() {
-		List<ServerData> servers = Arrays.asList(Constants.SERVERS);
+		List<ServerData> servers = Arrays.asList(Constants.settings.getServers());
 		Collections.shuffle(servers);
 		for(ServerData s : servers) {
 			if(s.isOnline()) {

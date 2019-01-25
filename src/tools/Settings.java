@@ -4,14 +4,19 @@ import server.ServerData;
 
 public class Settings {
 	
-	private ServerData[] servers;
+	private final ServerData[] servers;
+	private final int PORT;
 	
-	public Settings(ServerData[] servers) {
+	public Settings(ServerData[] servers, int port) {
 		this.servers = servers;
+		this.PORT = port;
 	}
 
 	public ServerData[] getServers() {
 		return servers;
+	}
+	public int getPort() {
+		return PORT;
 	}
 	
 }

@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
@@ -26,6 +27,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.CompoundBorder;
 
 import tools.Constants;
+import tools.Level;
 import tools.Logger;
 
 class Console {
@@ -129,7 +131,7 @@ class Console {
 			serverOverviewPanel.setLayout(new BoxLayout(serverOverviewPanel, BoxLayout.Y_AXIS));
 			serverOverviewPanel.setBackground(new Color(200, 200, 200));
 
-			for (ServerData server : Constants.SERVERS) {
+			for (ServerData server : Constants.settings.getServers()) {
 				JButton button = new JButton("Server " + server.getIp());
 				button.setFont(BUTTON_FONT);
 				button.setToolTipText("show data");
@@ -197,6 +199,27 @@ class Console {
 
 		//
 		{
+			JPanel consolePanel = new JPanel(new BorderLayout());
+			consolePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+			mainPanel.add(consolePanel, BorderLayout.SOUTH);
+			
+			{
+				JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+				consolePanel.add(panel, BorderLayout.NORTH);
+				
+				for(Level level : Level.values()) {
+					JRadioButton button = new JRadioButton(level.name());
+					button.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							level.setDisplay(button.isSelected());
+						}
+					});
+					button.getActionListeners()[0].actionPerformed(null);
+					panel.add(button);
+				}
+			}
+			
 			consoleArea = new JTextArea();
 			consoleArea.setFont(CONSOLE_FONT);
 			consoleArea.setEditable(false);
@@ -207,7 +230,7 @@ class Console {
 			scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 			scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 			scrollPane.setPreferredSize(new Dimension(0, 200));
-			mainPanel.add(scrollPane, BorderLayout.SOUTH);
+			consolePanel.add(scrollPane, BorderLayout.CENTER);
 		}
 	}
 

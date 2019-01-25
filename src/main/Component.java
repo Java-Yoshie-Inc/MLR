@@ -11,6 +11,8 @@ import java.util.Random;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import tools.Constants;
+
 public abstract class Component {
 	
 	protected static final Random random = new Random();
@@ -21,7 +23,7 @@ public abstract class Component {
 	}
 	
 	protected final String send(String context, String ip, String gsonString, int connectTimeout, int readTimeout) throws IOException {
-		URL obj = new URL("http://" + ip + context);
+		URL obj = new URL("http://" + ip + ":" + Constants.settings.getPort() + context);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setConnectTimeout(connectTimeout);
 		con.setReadTimeout(readTimeout);

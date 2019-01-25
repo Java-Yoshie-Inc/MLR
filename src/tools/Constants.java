@@ -1,11 +1,8 @@
 package tools;
 
-import server.ServerData;
-import tools.Logger.Level;
-
 public class Constants {
 	
-	public static ServerData[] SERVERS;
+	public static Settings settings;
 	public static final String NAME = "SOSE";
 	public static final String FULL_NAME = "Self-Organizing-Server-Empire";
 	public static final String DATA_PATH = "data/";
@@ -13,9 +10,8 @@ public class Constants {
 	
 	static {
 		try {
-			SERVERS = Tools.readSettings().getServers();
+			settings = Tools.readSettings();
 		} catch (Exception e) {
-			SERVERS = new ServerData[0];
 			Logger.log(e.getMessage(), Level.ERROR);
 		}
 	}
