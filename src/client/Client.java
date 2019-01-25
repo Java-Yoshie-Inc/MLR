@@ -13,10 +13,10 @@ import java.util.List;
 import javax.swing.Timer;
 
 import main.Component;
+import main.Constants;
 import server.Context;
 import server.ServerData;
 import server.ServerResponse;
-import tools.Constants;
 
 public class Client extends Component {
 	

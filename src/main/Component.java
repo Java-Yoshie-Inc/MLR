@@ -11,8 +11,6 @@ import java.util.Random;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import tools.Constants;
-
 public abstract class Component {
 	
 	protected static final Random random = new Random();

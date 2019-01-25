@@ -18,7 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -26,9 +25,11 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.CompoundBorder;
 
-import tools.Constants;
-import tools.Level;
-import tools.Logger;
+import gui.TextArea;
+import logger.Level;
+import logger.Logger;
+import logger.LoggerListener;
+import main.Constants;
 
 class Console {
 
@@ -38,7 +39,7 @@ class Console {
 	private JFrame frame;
 	private JPanel mainPanel;
 	private JPanel menuPanel;
-	private JTextArea consoleArea;
+	private TextArea consoleArea;
 	private JPanel infoPanel;
 	private JPanel commandPanel;
 
@@ -220,11 +221,17 @@ class Console {
 				}
 			}
 			
-			consoleArea = new JTextArea();
+			consoleArea = new TextArea();
 			consoleArea.setFont(CONSOLE_FONT);
 			consoleArea.setEditable(false);
-			consoleArea.setLineWrap(true);
-			consoleArea.setWrapStyleWord(true);
+			
+			Logger.addListener(new LoggerListener() {
+				@Override
+				public void onAction(String message, Level level) {
+					consoleArea.appendText(message, level.getColor());
+					consoleArea.setCaretPosition(consoleArea.getDocument().getLength());
+				}
+			});
 
 			JScrollPane scrollPane = new JScrollPane(consoleArea);
 			scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -265,7 +272,7 @@ class Console {
 
 	private void update() {
 		if (!consoleArea.getText().equals(Logger.getLog())) {
-			consoleArea.setText(Logger.getLog());
+			//consoleArea.setText(Logger.getLog());
 		}
 
 		if (selectedServer != null) {

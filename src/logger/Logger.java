@@ -1,14 +1,19 @@
-package tools;
+package logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+
+import main.Constants;
 
 public class Logger {
 	
 	private static final File file = new File(Constants.DATA_PATH + "log.log");
+	private static final List<LoggerListener> listeners = new ArrayList<LoggerListener>();
 	
 	static {
 		long length = file.length();
@@ -40,6 +45,9 @@ public class Logger {
 		
 		if(level.display()) {
 			Logger.sb.append(sb);
+			for(LoggerListener listener : listeners) {
+				listener.onAction(sb.toString(), level);
+			}
 		}
 		
 		try {
@@ -67,6 +75,10 @@ public class Logger {
 		Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("[dd.MM.yy-HH:mm:ss]");
         return sdf.format(cal.getTime());
+	}
+	
+	public static void addListener(LoggerListener listener) {
+		listeners.add(listener);
 	}
 
 }

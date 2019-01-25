@@ -1,4 +1,9 @@
-package tools;
+package main;
+
+import logger.Level;
+import logger.Logger;
+import tools.Settings;
+import tools.Tools;
 
 public class Constants {
 	
