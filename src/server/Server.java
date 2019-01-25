@@ -131,25 +131,16 @@ public class Server extends Component {
 
 		server.createContext(Context.SYNCHRONIZE, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
-							Logger.log("Receiving synchronizing data - " + files.length + " updated");
-							
-							if(!isPrimary()) saveSynchronizeFiles(files);
-							
-							String response = "";
-							arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
-							OutputStream output = arg.getResponseBody();
-							output.write(response.getBytes());
-							output.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-				}).start();
+				FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
+				Logger.log("Receiving synchronizing data - " + files.length + " updated");
+				
+				if(!isPrimary()) saveSynchronizeFiles(files);
+				
+				String response = "";
+				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
+				OutputStream output = arg.getResponseBody();
+				output.write(response.getBytes());
+				output.close();
 			}
 		});
 		
