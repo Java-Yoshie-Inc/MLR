@@ -30,18 +30,19 @@ import logger.Level;
 import logger.Logger;
 import main.Component;
 import main.Constants;
+import tools.Encoder;
 import tools.FileSaver;
 import tools.Stopwatch;
 import tools.Tools;
 
 public class Server extends Component {
-
+	
 	private static final int SERVERS_REACHABILITY_CHECK_DELAY = 30 * 1000;
 	private static final int SYNCHRONIZATION_DELAY = 15 * 1000;
 	private static final int HTTP_OK_STATUS = 200;
 	private static final int CLIENT_LOGOUT_TIME = 5 * 1000;
 	private final long ID = random.nextLong();
-
+	
 	private ServerData data;
 	private HttpServer server;
 	private Console console;
@@ -79,7 +80,7 @@ public class Server extends Component {
 						Server.super.send(Context.UPDATE, server.getIp(), input, 3000, 5000);
 					}
 				}
-
+				
 				ServerResponse serverResponse = new ServerResponse("ServerName");
 				String gsonString = gson.toJson(serverResponse, ServerResponse.class);
 				arg.sendResponseHeaders(HTTP_OK_STATUS, gsonString.length());
@@ -147,7 +148,7 @@ public class Server extends Component {
 			Logger.log(user.getName() + " logged in");
 		}
 	}
-
+	
 	/**
 	 * Returns server with highest priority which is online
 	 */
@@ -201,7 +202,7 @@ public class Server extends Component {
 	}
 	
 	private boolean isPrimary() {
-		return getPreferredServer() == this.data;
+		return getPreferredServer().equals(this.data);
 	}
 	
 	public void start() {
@@ -396,8 +397,7 @@ public class Server extends Component {
 			response.append(inputLine);
 		}
 		reader.close();
-
-		return response.toString();
+		return Encoder.decode(response.toString());
 	}
 
 }

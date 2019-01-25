@@ -11,6 +11,8 @@ import java.util.Random;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import tools.Encoder;
+
 public abstract class Component {
 	
 	protected static final Random random = new Random();
@@ -31,7 +33,7 @@ public abstract class Component {
 		con.setDoInput(true);
 		
 		OutputStream output = con.getOutputStream();
-		output.write(gsonString.getBytes());
+		output.write(Encoder.encode(gsonString).getBytes());
 		output.close();
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
