@@ -239,6 +239,7 @@ public class Server extends Component {
 	}
 
 	public void stop() {
+		console.exit();
 		server.stop(0);
 	}
 
@@ -269,6 +270,8 @@ public class Server extends Component {
 	 * Checks whether client disconnected
 	 */
 	private void checkClientConnection() {
+		if(clients.isEmpty()) return;
+		
 		List<ClientData> toRemove = new ArrayList<ClientData>();
 		for (ClientData client : clients) {
 			if (System.currentTimeMillis() - client.getLastUpdate() >= CLIENT_LOGOUT_TIME) {
@@ -413,6 +416,10 @@ public class Server extends Component {
 		}
 		reader.close();
 		return Encoder.decode(response.toString());
+	}
+	
+	public Console getConsole() {
+		return this.console;
 	}
 
 }

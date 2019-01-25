@@ -27,12 +27,6 @@ public class Logger {
 			}
 		}
 	}
-	
-	private static StringBuilder sb = new StringBuilder();
-
-	public static String getLog() {
-		return sb.toString();
-	}
 
 	public static void log(String text, Level level) {
 		StringBuilder sb = new StringBuilder();
@@ -44,7 +38,6 @@ public class Logger {
 		sb.append(text + System.lineSeparator());
 		
 		if(level.display()) {
-			Logger.sb.append(sb);
 			for(LoggerListener listener : listeners) {
 				listener.onAction(sb.toString(), level);
 			}

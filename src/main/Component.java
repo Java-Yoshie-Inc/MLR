@@ -22,7 +22,7 @@ public abstract class Component {
 		
 	}
 	
-	protected final String send(String context, String ip, String gsonString, int connectTimeout, int readTimeout) throws IOException {
+	public final String send(String context, String ip, String gsonString, int connectTimeout, int readTimeout) throws IOException {
 		URL obj = new URL("http://" + ip + ":" + Constants.settings.getPort() + context);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setConnectTimeout(connectTimeout);
@@ -48,7 +48,7 @@ public abstract class Component {
 		return gsonResponse.toString();
 	}
 	
-	protected final String send(String context, String ip, Object object, int connectTimeout, int readTimeout) throws IOException {
+	public final String send(String context, String ip, Object object, int connectTimeout, int readTimeout) throws IOException {
 		return send(context, ip, gson.toJson(object, object.getClass()), connectTimeout, readTimeout);
 	}
 	

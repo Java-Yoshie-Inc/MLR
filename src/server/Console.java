@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -96,7 +97,6 @@ class Console {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				exit();
 				server.stop();
 			}
 
@@ -165,6 +165,23 @@ class Console {
 			commandPanel.setBorder(new CompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
 					BorderFactory.createEmptyBorder(OFFSET, OFFSET, OFFSET, OFFSET)));
 			mainPanel.add(scrollPane, BorderLayout.EAST);
+			
+			
+			JButton button = new JButton("STOP");
+			button.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent event) {
+					ServerTasks tasks = new ServerTasks();
+					tasks.stop();
+					try {
+						server.send(Context.SERVER_TASKS, selectedServer.getIp(), tasks, 3 * 1000, 5 * 1000);
+					} catch (IOException e) {
+						Logger.log(e);
+					}
+				}
+			});
+			button.setToolTipText("Stop Server");
+			commandPanel.add(button);
 		}
 
 		//
@@ -216,6 +233,7 @@ class Console {
 							level.setDisplay(button.isSelected());
 						}
 					});
+					button.setToolTipText("Display " + level.name().toLowerCase() + " messages");
 					button.setSelected(true);
 					panel.add(button);
 				}
@@ -271,10 +289,6 @@ class Console {
 	}
 
 	private void update() {
-		if (!consoleArea.getText().equals(Logger.getLog())) {
-			//consoleArea.setText(Logger.getLog());
-		}
-
 		if (selectedServer != null) {
 			serverIpLabel.setText("IP: " + selectedServer.getIp());
 			serverNameLabel.setText("Name: " + selectedServer.getName());
@@ -283,7 +297,7 @@ class Console {
 		}
 	}
 
-	private void exit() {
+	public void exit() {
 		loop.stop();
 		frame.dispose();
 	}
