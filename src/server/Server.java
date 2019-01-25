@@ -131,16 +131,25 @@ public class Server extends Component {
 
 		server.createContext(Context.SYNCHRONIZE, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
-				FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
-				Logger.log("Receiving synchronizing data - " + files.length + " updated");
-				
-				if(!isPrimary()) saveSynchronizeFiles(files);
-				
-				String response = "";
-				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
-				OutputStream output = arg.getResponseBody();
-				output.write(response.getBytes());
-				output.close();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							FileSaver[] files = gson.fromJson(readInputStream(arg.getRequestBody()), FileSaver[].class);
+							Logger.log("Receiving synchronizing data - " + files.length + " updated");
+							
+							if(!isPrimary()) saveSynchronizeFiles(files);
+							
+							String response = "";
+							arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
+							OutputStream output = arg.getResponseBody();
+							output.write(response.getBytes());
+							output.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}).start();
 			}
 		});
 		
@@ -358,7 +367,7 @@ public class Server extends Component {
 	
 	private void requestSynchronization() {
 		if(isPrimary()) {
-			Logger.log("Requesting synchronizable files...");
+			Logger.log("Requesting synchronizable files...", Level.IMPORTANT_INFO);
 			
 			ServerData[] servers = getSortedServers();
 			if(servers.length >= 2) {
@@ -378,14 +387,14 @@ public class Server extends Component {
 				Logger.log("Requesting synchronizable files failed - only one server is registered", Level.WARNING);
 			}
 			
-			Logger.log("Requesting synchronizable files finished...");
+			Logger.log("Requesting synchronizable files finished...", Level.IMPORTANT_INFO);
 		}
 	}
 	
 	private void synchronize() {
 		ServerData preferredServer = getPreferredServer();
 		if (preferredServer == null || !preferredServer.equals(data)) return;
-
+		
 		Logger.log("Synchronizing data...");
 		
 		//stopwatch
@@ -394,6 +403,7 @@ public class Server extends Component {
 		
 		FileSaver[] files = getSynchronizeFiles();
 		boolean changed = !Arrays.equals(files, this.synchronizedFiles);
+		this.synchronizedFiles = files;
 		if(!changed) {
 			Logger.log("Synchronizing canceled - No local changes");
 			return;
@@ -404,13 +414,11 @@ public class Server extends Component {
 			if (server.equals(data) || !server.isOnline())
 				continue;
 			try {
-				super.send(Context.SYNCHRONIZE, server.getIp(), files, 3000, 5000);
+				super.send(Context.SYNCHRONIZE, server.getIp(), files, 0, 0);
 			} catch (IOException e) {
 				Logger.log(e);
 			}
 		}
-		
-		this.synchronizedFiles = files;
 		
 		stopwatch.stop();
 		Logger.log("Synchronizing finished - it took " + Tools.round(stopwatch.getDurationInSeconds(), 2) + "s");
