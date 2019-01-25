@@ -81,7 +81,7 @@ public class Server extends Component {
 					}
 				}
 				
-				ServerResponse serverResponse = new ServerResponse("ServerName");
+				ServerResponse serverResponse = new ServerResponse(Server.this.data);
 				String gsonString = gson.toJson(serverResponse, ServerResponse.class);
 				arg.sendResponseHeaders(HTTP_OK_STATUS, gsonString.length());
 				OutputStream output = arg.getResponseBody();
@@ -107,6 +107,21 @@ public class Server extends Component {
 				Logger.log(server.getIp() + " tries to identify");
 
 				String response = gson.toJson(Server.this.ID, long.class);
+				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
+				OutputStream output = arg.getResponseBody();
+				output.write(response.getBytes());
+				output.close();
+			}
+		});
+		
+		server.createContext(Context.SERVER_TASKS, new HttpHandler() {
+			public void handle(HttpExchange arg) throws IOException {
+				ServerTasks tasks = gson.fromJson(readInputStream(arg.getRequestBody()), ServerTasks.class);
+				Logger.log("Received Tasks");
+				
+				tasks.invoke(Server.this);
+
+				String response = "";
 				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
 				OutputStream output = arg.getResponseBody();
 				output.write(response.getBytes());
@@ -217,7 +232,7 @@ public class Server extends Component {
 		identify();
 		requestSynchronization();
 
-		// lambda is amazing #Best Java8 Feature
+		// lambda is amazing #Best Java-8 Feature
 		loop(() -> checkServerReachability(), SERVERS_REACHABILITY_CHECK_DELAY, true, false);
 		loop(() -> synchronize(), SYNCHRONIZATION_DELAY, true, true);
 		loop(() -> checkClientConnection(), CLIENT_LOGOUT_TIME * 2, true, false);
