@@ -110,6 +110,7 @@ public class Tools {
 				Object field1 = fields1[i].get(object1);
 				Object field2 = fields2[i].get(object2);
 				if (!field1.equals(field2)) {
+					System.out.println(fields1[i].getName());
 					return false;
 				}
 			}

@@ -14,6 +14,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -45,9 +46,10 @@ public class Server extends Component {
 	private HttpServer server;
 	private Console console;
 	private List<ClientData> clients = new ArrayList<ClientData>();
-
+	private FileSaver[] synchronizedFiles = new FileSaver[0];
+	
 	private boolean hasCheckedReachability = true;
-
+	
 	public Server() throws IOException {
 		try {
 			server = HttpServer.create(new InetSocketAddress(Constants.settings.getPort()), 0);
@@ -333,12 +335,14 @@ public class Server extends Component {
 			Logger.log("Requesting synchronizable files...");
 			
 			for(ServerData server : Constants.settings.getServers()) {
-				try {
-					String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 5000, 5000);
-					FileSaver[] files = gson.fromJson(gsonResponse, FileSaver[].class);
-					saveSynchronizeFiles(files);
-				} catch (IOException e) {
-					Logger.log(e);
+				if(server.isOnline()) {
+					try {
+						String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 5000, 5000);
+						FileSaver[] files = gson.fromJson(gsonResponse, FileSaver[].class);
+						saveSynchronizeFiles(files);
+					} catch (IOException e) {
+						Logger.log(e);
+					}
 				}
 			}
 			
@@ -357,6 +361,11 @@ public class Server extends Component {
 		stopwatch.start();
 		
 		FileSaver[] files = getSynchronizeFiles();
+		boolean changed = !Arrays.equals(files, this.synchronizedFiles);
+		if(!changed) {
+			Logger.log("Synchronizing canceled - No local changes");
+			return;
+		}
 		
 		//send files to each server
 		for (ServerData server : Constants.settings.getServers()) {
@@ -368,7 +377,9 @@ public class Server extends Component {
 				Logger.log(e);
 			}
 		}
-
+		
+		this.synchronizedFiles = files;
+		
 		stopwatch.stop();
 		Logger.log("Synchronizing finished - it took " + Tools.round(stopwatch.getDurationInSeconds(), 2) + "s");
 	}
