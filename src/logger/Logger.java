@@ -32,9 +32,6 @@ public class Logger {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getTime());
 		sb.append(" ");
-		if (level != Level.INFO) {
-			sb.append(level + ": ");
-		}
 		sb.append(text + System.lineSeparator());
 		
 		if(level.display()) {

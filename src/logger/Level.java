@@ -4,7 +4,10 @@ import java.awt.Color;
 
 public enum Level {
 	
-	INFO(Color.BLACK), WARNING(new Color(255, 120, 0)), ERROR(Color.RED);
+	INFO(new Color(30, 30, 30)), 
+	IMPORTANT_INFO(Color.BLACK), 
+	WARNING(new Color(255, 120, 0)), 
+	ERROR(Color.RED);
 
 	private boolean display = true;
 	private final Color color;

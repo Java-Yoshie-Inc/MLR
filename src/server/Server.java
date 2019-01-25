@@ -160,7 +160,7 @@ public class Server extends Component {
 	private void login(User user) {
 		if (getClient(user) == null) {
 			clients.add(new ClientData(user));
-			Logger.log(user.getName() + " logged in");
+			Logger.log(user.getName() + " logged in", Level.IMPORTANT_INFO);
 		}
 	}
 	
@@ -222,10 +222,11 @@ public class Server extends Component {
 	
 	public void start() {
 		server.start();
-		Logger.log("Server started");
 		
 		this.console = new Console(this);
 		this.console.start();
+		
+		Logger.log("Server started", Level.IMPORTANT_INFO);
 		
 		while(!Tools.hasInternet());
 		checkServerReachability();
@@ -281,7 +282,7 @@ public class Server extends Component {
 		clients.removeAll(toRemove);
 
 		for (ClientData client : toRemove) {
-			Logger.log(client.getUser().getName() + " logged out");
+			Logger.log(client.getUser().getName() + " logged out", Level.IMPORTANT_INFO);
 		}
 	}
 

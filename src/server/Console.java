@@ -180,7 +180,7 @@ class Console {
 					}
 				}
 			});
-			button.setToolTipText("Stop Server");
+			button.setToolTipText("Force Server to stop");
 			commandPanel.add(button);
 		}
 
