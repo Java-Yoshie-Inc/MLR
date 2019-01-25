@@ -1,6 +1,6 @@
 package server;
 
-public class ServerData {
+public class ServerData implements Comparable<ServerData> {
 	
 	private final String IP;
 	private final int PRIORITY;
@@ -14,6 +14,22 @@ public class ServerData {
 		this.NAME = name;
 		this.online = false;
 	}
+	
+	public int compareTo(ServerData other){
+		if(this.PRIORITY > other.PRIORITY) {
+			if(this.online == other.online) {
+				return 1;
+			} else {
+				return other.online ? 1 : -1;
+			}
+		} else if(this.PRIORITY < other.PRIORITY) {
+			if(this.online == other.online) {
+				return -1;
+			} else {
+				return other.online ? 1 : -1;
+			}
+		} return 0;
+    }
 	
 	@Override
 	public String toString() {

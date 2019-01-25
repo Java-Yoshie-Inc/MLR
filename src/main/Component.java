@@ -27,7 +27,6 @@ public abstract class Component {
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setConnectTimeout(connectTimeout);
 		con.setReadTimeout(readTimeout);
-		
 		con.setRequestMethod("POST");
 		con.setDoOutput(true);
 		con.setDoInput(true);

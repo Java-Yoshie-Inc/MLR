@@ -180,6 +180,12 @@ public class Server extends Component {
 			System.out.println("All Servers all down ");
 		return server;
 	}
+	
+	private ServerData[] getSortedServers() {
+		ServerData[] servers = Constants.settings.getServers().clone();
+		Arrays.sort(servers);
+		return servers;
+	}
 
 	private ClientData getClient(User user) {
 		for (ClientData client : clients) {
@@ -292,7 +298,7 @@ public class Server extends Component {
 	private void checkServerReachability() {
 		if (!hasCheckedReachability)
 			return;
-
+		
 		try {
 			if (!Tools.hasInternet()) {
 				Logger.log("No internet connection", Level.WARNING);
@@ -354,7 +360,9 @@ public class Server extends Component {
 		if(isPrimary()) {
 			Logger.log("Requesting synchronizable files...");
 			
-			for(ServerData server : Constants.settings.getServers()) {
+			ServerData[] servers = getSortedServers();
+			if(servers.length >= 2) {
+				ServerData server = servers[1];
 				if(server.isOnline()) {
 					try {
 						String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 5000, 5000);
@@ -363,7 +371,11 @@ public class Server extends Component {
 					} catch (IOException e) {
 						Logger.log(e);
 					}
+				} else {
+					Logger.log("Requesting synchronizable files failed - former primary server is not online", Level.WARNING);
 				}
+			} else {
+				Logger.log("Requesting synchronizable files failed - only one server is registered", Level.WARNING);
 			}
 			
 			Logger.log("Requesting synchronizable files finished...");
