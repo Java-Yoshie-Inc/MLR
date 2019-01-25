@@ -357,29 +357,27 @@ public class Server extends Component {
 	}
 	
 	private void requestSynchronization() {
-		if(isPrimary()) {
-			Logger.log("Requesting synchronizable files...", Level.IMPORTANT_INFO);
-			
-			ServerData[] servers = getSortedServers();
-			if(servers.length >= 2) {
-				ServerData server = servers[1];
-				if(server.isOnline()) {
-					try {
-						String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 5000, 5000);
-						FileSaver[] files = gson.fromJson(gsonResponse, FileSaver[].class);
-						saveSynchronizeFiles(files);
-					} catch (IOException e) {
-						Logger.log(e);
-					}
-				} else {
-					Logger.log("Requesting synchronizable files failed - former primary server is not online", Level.WARNING);
+		Logger.log("Requesting synchronizable files...", Level.IMPORTANT_INFO);
+		
+		ServerData[] servers = getSortedServers();
+		if(servers.length >= 2) {
+			ServerData server = servers[1];
+			if(server.isOnline()) {
+				try {
+					String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 5000, 5000);
+					FileSaver[] files = gson.fromJson(gsonResponse, FileSaver[].class);
+					saveSynchronizeFiles(files);
+				} catch (IOException e) {
+					Logger.log(e);
 				}
 			} else {
-				Logger.log("Requesting synchronizable files failed - only one server is registered", Level.WARNING);
+				Logger.log("Requesting synchronizable files failed - former primary server is not online", Level.WARNING);
 			}
-			
-			Logger.log("Requesting synchronizable files finished...", Level.IMPORTANT_INFO);
+		} else {
+			Logger.log("Requesting synchronizable files failed - only one server is registered", Level.WARNING);
 		}
+		
+		Logger.log("Requesting synchronizable files finished...", Level.IMPORTANT_INFO);
 	}
 	
 	private void synchronize() {
