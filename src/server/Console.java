@@ -215,7 +215,7 @@ class Console {
 							level.setDisplay(button.isSelected());
 						}
 					});
-					button.getActionListeners()[0].actionPerformed(null);
+					button.setSelected(true);
 					panel.add(button);
 				}
 			}
