@@ -361,7 +361,7 @@ public class Server extends Component {
 		
 		ServerData[] servers = getSortedServers();
 		if(servers.length >= 2) {
-			ServerData server = servers[1];
+			ServerData server = isPrimary() ? servers[1] : servers[0];
 			if(server.isOnline()) {
 				try {
 					String gsonResponse = super.send(Context.REQUEST_SYNCHRONIZATION, server.getIp(), "", 5000, 5000);
