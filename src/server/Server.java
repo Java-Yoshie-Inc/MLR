@@ -103,8 +103,8 @@ public class Server extends Component {
 
 		server.createContext(Context.SERVER_IDENTIFY, new HttpHandler() {
 			public void handle(HttpExchange arg) throws IOException {
-				ServerData server = gson.fromJson(readInputStream(arg.getRequestBody()), ServerData.class);
-				Logger.log(server.getIp() + " tries to identify");
+				String input = readInputStream(arg.getRequestBody());;
+				Logger.log(input + " tries to identify");
 
 				String response = gson.toJson(Server.this.ID, long.class);
 				arg.sendResponseHeaders(HTTP_OK_STATUS, response.length());
@@ -202,7 +202,7 @@ public class Server extends Component {
 	private void identify() {
 		for (ServerData server : Constants.settings.getServers()) {
 			try {
-				String gsonResponse = super.send(Context.SERVER_IDENTIFY, server.getIp(), server, 3000, 5000);
+				String gsonResponse = super.send(Context.SERVER_IDENTIFY, server.getIp(), Tools.getIp(), 3000, 5000);
 				long response = gson.fromJson(gsonResponse, long.class);
 				if (response == this.ID) {
 					this.data = server;
