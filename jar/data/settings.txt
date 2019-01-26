@@ -1,7 +1,7 @@
 {
 "servers":[
-{"IP":"77.10.28.122","PRIORITY":1,"online":false,"NAME":"Ron Server 1"},
-{"IP":"yourip","PRIORITY":0,"online":false,"NAME":"Maxwell Server"}
+{"IP":"77.0.167.128","PRIORITY":1,"online":false,"NAME":"Ron Server 1"},
+{"IP":"localhost","PRIORITY":0,"online":false,"NAME":"Maxwell Server"}
 ],
 "PORT":"2026"
 }
